@@ -308,7 +308,6 @@ public class Kasir extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(80, 80, 80));
         jLabel4.setText("20/03/2024");
 
-        jTable1.setBackground(new java.awt.Color(255, 255, 255));
         jTable1.setForeground(new java.awt.Color(80, 80, 80));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -339,15 +338,6 @@ public class Kasir extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(80, 80, 80));
         jLabel8.setText("Kembalian");
 
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
-
-        jTextField5.setBackground(new java.awt.Color(255, 255, 255));
-
-        jTextField6.setBackground(new java.awt.Color(255, 255, 255));
-
-        jTextField7.setBackground(new java.awt.Color(255, 255, 255));
-
-        jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setForeground(new java.awt.Color(80, 80, 80));
         jButton1.setText("Bayar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -356,7 +346,6 @@ public class Kasir extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 255, 255));
         jButton2.setForeground(new java.awt.Color(80, 80, 80));
         jButton2.setText("Hapus");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -399,7 +388,7 @@ public class Kasir extends javax.swing.JFrame {
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         roundedJpanel2Layout.setVerticalGroup(
             roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
