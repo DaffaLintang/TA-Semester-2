@@ -871,18 +871,12 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-<<<<<<< HEAD
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="ceteakBarccodePanel" max="32767" attributes="0"/>
                               <Component id="jScrollPaneBarcode" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-=======
-                          <EmptySpace min="-2" pref="219" max="-2" attributes="0"/>
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="422" max="32767" attributes="0"/>
->>>>>>> Daffa01
                       </Group>
                       <Component id="barcodeNav" alignment="0" max="32767" attributes="0"/>
                   </Group>
