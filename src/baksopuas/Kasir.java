@@ -4,6 +4,22 @@
  */
 package baksopuas;
 
+import com.mysql.jdbc.Blob;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+
 /**
  *
  * @author Daffa Lintang
@@ -13,8 +29,68 @@ public class Kasir extends javax.swing.JFrame {
     /**
      * Creates new form Kasir
      */
+    public void loadMenu(){
+        try{
+        Connection c = Koneksi.getKoneksi();
+        java.sql.Statement s = c.createStatement();
+        
+        String sql = "SELECT * FROM menu";
+        ResultSet r = s.executeQuery(sql);
+        
+        while(r.next()){ 
+                JPanel container = new JPanel();
+            
+                JPanel itemPanel = new JPanel();
+                itemPanel.setLayout(new BorderLayout());
+                // Buat border dengan padding dan garis hitam
+                Border compoundBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(50, 15, 5, 15),
+                BorderFactory.createLineBorder(Color.black)
+                );
+                itemPanel.setBorder(compoundBorder);
+                // Menambahkan gambar (jika ada)
+               Blob imageBlob = (Blob) r.getBlob("foto_makanan");
+               byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
+               Image image = Toolkit.getDefaultToolkit().createImage(imageBytes);
+               ImageIcon imageIcon = new ImageIcon(image);
+               JLabel labelGambar = new JLabel(imageIcon);
+               itemPanel.add(labelGambar, BorderLayout.NORTH);
+
+                // Menambahkan nama makanan
+                JLabel labelNama = new JLabel(r.getString("nama_makanan"));
+                labelNama.setHorizontalAlignment(SwingConstants.CENTER);
+                itemPanel.add(labelNama, BorderLayout.CENTER);
+                
+                // Menambahkan harga
+                JLabel labelHarga = new JLabel("Rp " + r.getDouble("harga_jual"));
+                labelHarga.setHorizontalAlignment(SwingConstants.CENTER);
+                itemPanel.add(labelHarga, BorderLayout.SOUTH);
+                
+                container.add(itemPanel);
+                  
+
+                // Tambahkan panel item ke panel menuBtn
+                menuContainer.add(itemPanel);
+    
+        }
+ 
+        r.close();
+        s.close();
+    }catch(Exception e){
+        System.out.println(e);
+    }
+    }
+    
+    public void getDate(){
+         Date today = new Date();
+         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+         String formattedDate = formatter.format(today);
+         tanggal.setText(formattedDate);
+    }
     public Kasir() {
         initComponents();
+        loadMenu();
+        getDate();
     }
 
     /**
@@ -30,24 +106,13 @@ public class Kasir extends javax.swing.JFrame {
         roundedJpanel1 = new baksopuas.roundedJpanelShadow();
         panelRound3 = new test.PanelRound();
         jLabel1 = new javax.swing.JLabel();
-        panelRound1 = new test.PanelRound();
-        panelRound2 = new test.PanelRound();
-        panelRound5 = new test.PanelRound();
-        panelRound6 = new test.PanelRound();
-        panelRound7 = new test.PanelRound();
-        panelRound8 = new test.PanelRound();
-        panelRound9 = new test.PanelRound();
-        panelRound10 = new test.PanelRound();
-        panelRound11 = new test.PanelRound();
-        panelRound12 = new test.PanelRound();
-        panelRound13 = new test.PanelRound();
-        panelRound14 = new test.PanelRound();
-        panelRound15 = new test.PanelRound();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        menuContainer = new javax.swing.JPanel();
         roundedJpanel2 = new baksopuas.roundedJpanelShadow();
         panelRound4 = new test.PanelRound();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        tanggal = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
@@ -82,7 +147,7 @@ public class Kasir extends javax.swing.JFrame {
             .addGroup(panelRound3Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(420, Short.MAX_VALUE))
         );
         panelRound3Layout.setVerticalGroup(
             panelRound3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,166 +157,13 @@ public class Kasir extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panelRound1.setBackground(new java.awt.Color(255, 222, 197));
-        panelRound1.setRoundBottomLeft(20);
-        panelRound1.setRoundBottomRight(20);
-        panelRound1.setLayout(new java.awt.GridLayout(3, 5, 5, 5));
+        jScrollPane2.setBackground(new java.awt.Color(255, 222, 195));
+        jScrollPane2.setBorder(null);
+        jScrollPane2.setForeground(new java.awt.Color(255, 222, 195));
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        javax.swing.GroupLayout panelRound2Layout = new javax.swing.GroupLayout(panelRound2);
-        panelRound2.setLayout(panelRound2Layout);
-        panelRound2Layout.setHorizontalGroup(
-            panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound2Layout.setVerticalGroup(
-            panelRound2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound2);
-
-        javax.swing.GroupLayout panelRound5Layout = new javax.swing.GroupLayout(panelRound5);
-        panelRound5.setLayout(panelRound5Layout);
-        panelRound5Layout.setHorizontalGroup(
-            panelRound5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound5Layout.setVerticalGroup(
-            panelRound5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound5);
-
-        javax.swing.GroupLayout panelRound6Layout = new javax.swing.GroupLayout(panelRound6);
-        panelRound6.setLayout(panelRound6Layout);
-        panelRound6Layout.setHorizontalGroup(
-            panelRound6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound6Layout.setVerticalGroup(
-            panelRound6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound6);
-
-        javax.swing.GroupLayout panelRound7Layout = new javax.swing.GroupLayout(panelRound7);
-        panelRound7.setLayout(panelRound7Layout);
-        panelRound7Layout.setHorizontalGroup(
-            panelRound7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound7Layout.setVerticalGroup(
-            panelRound7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound7);
-
-        javax.swing.GroupLayout panelRound8Layout = new javax.swing.GroupLayout(panelRound8);
-        panelRound8.setLayout(panelRound8Layout);
-        panelRound8Layout.setHorizontalGroup(
-            panelRound8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound8Layout.setVerticalGroup(
-            panelRound8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound8);
-
-        javax.swing.GroupLayout panelRound9Layout = new javax.swing.GroupLayout(panelRound9);
-        panelRound9.setLayout(panelRound9Layout);
-        panelRound9Layout.setHorizontalGroup(
-            panelRound9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound9Layout.setVerticalGroup(
-            panelRound9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound9);
-
-        javax.swing.GroupLayout panelRound10Layout = new javax.swing.GroupLayout(panelRound10);
-        panelRound10.setLayout(panelRound10Layout);
-        panelRound10Layout.setHorizontalGroup(
-            panelRound10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound10Layout.setVerticalGroup(
-            panelRound10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound10);
-
-        javax.swing.GroupLayout panelRound11Layout = new javax.swing.GroupLayout(panelRound11);
-        panelRound11.setLayout(panelRound11Layout);
-        panelRound11Layout.setHorizontalGroup(
-            panelRound11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound11Layout.setVerticalGroup(
-            panelRound11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound11);
-
-        javax.swing.GroupLayout panelRound12Layout = new javax.swing.GroupLayout(panelRound12);
-        panelRound12.setLayout(panelRound12Layout);
-        panelRound12Layout.setHorizontalGroup(
-            panelRound12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound12Layout.setVerticalGroup(
-            panelRound12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound12);
-
-        javax.swing.GroupLayout panelRound13Layout = new javax.swing.GroupLayout(panelRound13);
-        panelRound13.setLayout(panelRound13Layout);
-        panelRound13Layout.setHorizontalGroup(
-            panelRound13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound13Layout.setVerticalGroup(
-            panelRound13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound13);
-
-        javax.swing.GroupLayout panelRound14Layout = new javax.swing.GroupLayout(panelRound14);
-        panelRound14.setLayout(panelRound14Layout);
-        panelRound14Layout.setHorizontalGroup(
-            panelRound14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound14Layout.setVerticalGroup(
-            panelRound14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound14);
-
-        javax.swing.GroupLayout panelRound15Layout = new javax.swing.GroupLayout(panelRound15);
-        panelRound15.setLayout(panelRound15Layout);
-        panelRound15Layout.setHorizontalGroup(
-            panelRound15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        panelRound15Layout.setVerticalGroup(
-            panelRound15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-
-        panelRound1.add(panelRound15);
+        menuContainer.setLayout(new java.awt.GridLayout(10, 3));
+        jScrollPane2.setViewportView(menuContainer);
 
         javax.swing.GroupLayout roundedJpanel1Layout = new javax.swing.GroupLayout(roundedJpanel1);
         roundedJpanel1.setLayout(roundedJpanel1Layout);
@@ -261,8 +173,8 @@ public class Kasir extends javax.swing.JFrame {
                 .addComponent(panelRound3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(11, 11, 11))
             .addGroup(roundedJpanel1Layout.createSequentialGroup()
-                .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(24, 24, 24))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addGap(21, 21, 21))
         );
         roundedJpanel1Layout.setVerticalGroup(
             roundedJpanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,8 +182,8 @@ public class Kasir extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(panelRound3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(126, 126, 126))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+                .addGap(18, 18, 18))
         );
 
         roundedJpanel2.setBackground(new java.awt.Color(255, 222, 195));
@@ -305,8 +217,8 @@ public class Kasir extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(80, 80, 80));
         jLabel3.setText("Tanggal :");
 
-        jLabel4.setForeground(new java.awt.Color(80, 80, 80));
-        jLabel4.setText("20/03/2024");
+        tanggal.setForeground(new java.awt.Color(80, 80, 80));
+        tanggal.setText("20/03/2024");
 
         jTable1.setForeground(new java.awt.Color(80, 80, 80));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -364,31 +276,34 @@ public class Kasir extends javax.swing.JFrame {
             .addGroup(roundedJpanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                        .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8))
-                        .addGap(34, 34, 34)
-                        .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(roundedJpanel2Layout.createSequentialGroup()
                         .addGap(89, 89, 89)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                        .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8))
+                                .addGap(34, 34, 34)
+                                .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         roundedJpanel2Layout.setVerticalGroup(
             roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -398,9 +313,9 @@ public class Kasir extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(tanggal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -508,34 +423,23 @@ public class Kasir extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
-    private test.PanelRound panelRound1;
-    private test.PanelRound panelRound10;
-    private test.PanelRound panelRound11;
-    private test.PanelRound panelRound12;
-    private test.PanelRound panelRound13;
-    private test.PanelRound panelRound14;
-    private test.PanelRound panelRound15;
-    private test.PanelRound panelRound2;
+    private javax.swing.JPanel menuContainer;
     private test.PanelRound panelRound3;
     private test.PanelRound panelRound4;
-    private test.PanelRound panelRound5;
-    private test.PanelRound panelRound6;
-    private test.PanelRound panelRound7;
-    private test.PanelRound panelRound8;
-    private test.PanelRound panelRound9;
     private baksopuas.roundedJpanelShadow roundedJpanel1;
     private baksopuas.roundedJpanelShadow roundedJpanel2;
+    private javax.swing.JLabel tanggal;
     // End of variables declaration//GEN-END:variables
 }
