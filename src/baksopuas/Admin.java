@@ -58,10 +58,10 @@ public class Admin extends javax.swing.JFrame {
         historiNav = new javax.swing.JPanel();
         historiLabel = new javax.swing.JLabel();
         historiPanel = new javax.swing.JPanel();
-        cari = new javax.swing.JTextField();
         historiScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        btnCari = new javax.swing.JButton();
+        cari = new javax.swing.JTextField();
+        cariHistori = new javax.swing.JButton();
         karyawan = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         cetakBarcode = new javax.swing.JPanel();
@@ -424,12 +424,6 @@ public class Admin extends javax.swing.JFrame {
 
         historiPanel.setBackground(new java.awt.Color(254, 239, 210));
 
-        cari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariActionPerformed(evt);
-            }
-        });
-
         jTable1.setForeground(new java.awt.Color(255, 255, 255));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -444,13 +438,7 @@ public class Admin extends javax.swing.JFrame {
         ));
         historiScrollPane.setViewportView(jTable1);
 
-        btnCari.setForeground(new java.awt.Color(80, 80, 80));
-        btnCari.setText("Cari");
-        btnCari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCariActionPerformed(evt);
-            }
-        });
+        cariHistori.setText("Cari");
 
         javax.swing.GroupLayout historiPanelLayout = new javax.swing.GroupLayout(historiPanel);
         historiPanel.setLayout(historiPanelLayout);
@@ -463,7 +451,7 @@ public class Admin extends javax.swing.JFrame {
                     .addGroup(historiPanelLayout.createSequentialGroup()
                         .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCari)
+                        .addComponent(cariHistori)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(28, 28, 28))
         );
@@ -473,7 +461,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(33, 33, 33)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCari))
+                    .addComponent(cariHistori))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
@@ -818,9 +806,9 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JPanel barcodeNav;
     private javax.swing.JLabel barcodeNavLabel;
     private javax.swing.JTable barcodeTabel;
-    private javax.swing.JButton btnCari;
     private javax.swing.JTextField cari;
     private java.awt.Button cariBtnBarcode;
+    private javax.swing.JButton cariHistori;
     private javax.swing.JPanel cetakBarcode;
     private javax.swing.JButton cetakBarcodeBtn;
     private javax.swing.JPanel ceteakBarccodePanel;
