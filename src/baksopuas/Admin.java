@@ -26,6 +26,8 @@ public class Admin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         sideBar = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -34,7 +36,6 @@ public class Admin extends javax.swing.JFrame {
         homeBtn = new javax.swing.JButton();
         historiBtn = new javax.swing.JButton();
         karyawanBtn = new javax.swing.JButton();
-        cetakBarcodeBtn = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         dashboard = new javax.swing.JPanel();
         dashboardNav = new javax.swing.JPanel();
@@ -53,17 +54,55 @@ public class Admin extends javax.swing.JFrame {
         curveLineChart1 = new chart.CurveLineChart();
         grafikLabel = new javax.swing.JLabel();
         inputMenu = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        PanelInputMenu1 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        PanelInputMenu2 = new javax.swing.JPanel();
+        FieldInputMenu1 = new javax.swing.JTextField();
+        LabelInputMenu1 = new javax.swing.JLabel();
+        FieldInputMenu2 = new javax.swing.JTextField();
+        LabelInputMenu2 = new javax.swing.JLabel();
+        FieldInputMenu3 = new javax.swing.JTextField();
+        LabelInputMenu3 = new javax.swing.JLabel();
+        FieldInputMenu4 = new javax.swing.JTextField();
+        LabelInputMenu5 = new javax.swing.JLabel();
+        FieldInputMenu5 = new javax.swing.JTextField();
+        LabelInputMenu6 = new javax.swing.JLabel();
+        FieldInputMenu6 = new javax.swing.JTextField();
+        ButtonCari = new javax.swing.JButton();
+        ButtonSimpan = new javax.swing.JButton();
+        ButtonEdit = new javax.swing.JButton();
+        ButtonHapus = new javax.swing.JButton();
+        TabelInputMenu = new javax.swing.JScrollPane();
+        Tabel1 = new javax.swing.JTable();
         histori = new javax.swing.JPanel();
         historiNav = new javax.swing.JPanel();
         historiLabel = new javax.swing.JLabel();
         historiPanel = new javax.swing.JPanel();
+        cari = new javax.swing.JTextField();
         historiScrollPane = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        cariBtnHistori = new javax.swing.JButton();
-        cariTx = new javax.swing.JTextField();
-        karyawan = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        btnCari = new javax.swing.JButton();
+        InputUser = new javax.swing.JPanel();
+        PanelInputUser1 = new javax.swing.JPanel();
+        LabelInputUser1 = new javax.swing.JLabel();
+        PanelInputUser2 = new javax.swing.JPanel();
+        FieldInputUser1 = new javax.swing.JTextField();
+        LabelInputUser2 = new javax.swing.JLabel();
+        FieldInputUser2 = new javax.swing.JTextField();
+        FieldInputUser3 = new javax.swing.JTextField();
+        LabelInputUser3 = new javax.swing.JLabel();
+        LabelInputUser4 = new javax.swing.JLabel();
+        FieldInputUser4 = new javax.swing.JTextField();
+        LabelInputUser5 = new javax.swing.JLabel();
+        FieldInputUser5 = new javax.swing.JTextField();
+        LabelInputUser6 = new javax.swing.JLabel();
+        FieldInputUser6 = new javax.swing.JTextField();
+        ButtonInputUserCari = new javax.swing.JButton();
+        ButtonInputUserSimpan = new javax.swing.JButton();
+        ButtonInputUserEdit = new javax.swing.JButton();
+        ButtonInputUserHapus = new javax.swing.JButton();
+        TabelInputUser = new javax.swing.JScrollPane();
+        TabelInputUser1 = new javax.swing.JTable();
         cetakBarcode = new javax.swing.JPanel();
         ceteakBarccodePanel = new javax.swing.JPanel();
         inputDiskonBarcode = new javax.swing.JTextField();
@@ -79,6 +118,19 @@ public class Admin extends javax.swing.JFrame {
         barcodeTabel = new javax.swing.JTable();
         barcodeNav = new javax.swing.JPanel();
         barcodeNavLabel = new javax.swing.JLabel();
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -112,7 +164,7 @@ public class Admin extends javax.swing.JFrame {
                 logOutBtnActionPerformed(evt);
             }
         });
-        sideBar.add(logOutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, 120, 40));
+        sideBar.add(logOutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 120, 40));
 
         homeBtn.setBackground(new java.awt.Color(124, 183, 89));
         homeBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -146,17 +198,6 @@ public class Admin extends javax.swing.JFrame {
             }
         });
         sideBar.add(karyawanBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 120, 40));
-
-        cetakBarcodeBtn.setBackground(new java.awt.Color(124, 183, 89));
-        cetakBarcodeBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cetakBarcodeBtn.setText("Cetak Barcode");
-        cetakBarcodeBtn.setBorder(null);
-        cetakBarcodeBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cetakBarcodeBtnActionPerformed(evt);
-            }
-        });
-        sideBar.add(cetakBarcodeBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 120, 40));
 
         mainPanel.setBackground(new java.awt.Color(255, 255, 255));
         mainPanel.setLayout(new java.awt.CardLayout());
@@ -207,7 +248,7 @@ public class Admin extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(profitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
                 .addGap(27, 27, 27))
         );
         profitLayout.setVerticalGroup(
@@ -243,7 +284,7 @@ public class Admin extends javax.swing.JFrame {
                     .addGroup(pengeluaranLayout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pengeluaranLayout.setVerticalGroup(
@@ -277,7 +318,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGroup(pemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pemasukanLayout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 7, Short.MAX_VALUE))
+                        .addGap(0, 8, Short.MAX_VALUE))
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -375,23 +416,206 @@ public class Admin extends javax.swing.JFrame {
 
         mainPanel.add(dashboard, "card2");
 
-        jLabel3.setText("Input Menu");
+        PanelInputMenu1.setBackground(new java.awt.Color(255, 186, 134));
+
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText("Input Menu");
+
+        javax.swing.GroupLayout PanelInputMenu1Layout = new javax.swing.GroupLayout(PanelInputMenu1);
+        PanelInputMenu1.setLayout(PanelInputMenu1Layout);
+        PanelInputMenu1Layout.setHorizontalGroup(
+            PanelInputMenu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputMenu1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jLabel14)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        PanelInputMenu1Layout.setVerticalGroup(
+            PanelInputMenu1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelInputMenu1Layout.createSequentialGroup()
+                .addContainerGap(7, Short.MAX_VALUE)
+                .addComponent(jLabel14)
+                .addContainerGap())
+        );
+
+        PanelInputMenu2.setBackground(new java.awt.Color(254, 239, 208));
+
+        FieldInputMenu1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu1ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu1.setText("Kode Makanan");
+
+        FieldInputMenu2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu2ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu2.setText("Nama Makanan");
+
+        FieldInputMenu3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu3ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu3.setText("Foto Makanan");
+
+        FieldInputMenu4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu4ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu5.setText("Harga Beli");
+
+        FieldInputMenu5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu5ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu6.setText("Harga Jual");
+
+        FieldInputMenu6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu6ActionPerformed(evt);
+            }
+        });
+
+        ButtonCari.setText("Cari");
+        ButtonCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonCariActionPerformed(evt);
+            }
+        });
+
+        ButtonSimpan.setText("Simpan");
+        ButtonSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonSimpanActionPerformed(evt);
+            }
+        });
+
+        ButtonEdit.setText("Edit");
+        ButtonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonEditActionPerformed(evt);
+            }
+        });
+
+        ButtonHapus.setText("Hapus");
+        ButtonHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonHapusActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PanelInputMenu2Layout = new javax.swing.GroupLayout(PanelInputMenu2);
+        PanelInputMenu2.setLayout(PanelInputMenu2Layout);
+        PanelInputMenu2Layout.setHorizontalGroup(
+            PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputMenu2Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(FieldInputMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputMenu3)
+                    .addComponent(FieldInputMenu3, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputMenu2)
+                    .addComponent(FieldInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputMenu1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(FieldInputMenu4, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputMenu5)
+                    .addComponent(FieldInputMenu5, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputMenu6)
+                    .addGroup(PanelInputMenu2Layout.createSequentialGroup()
+                        .addComponent(FieldInputMenu6, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ButtonCari, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(41, 41, 41))
+            .addGroup(PanelInputMenu2Layout.createSequentialGroup()
+                .addGap(214, 214, 214)
+                .addComponent(ButtonSimpan)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ButtonEdit)
+                .addGap(14, 14, 14)
+                .addComponent(ButtonHapus)
+                .addContainerGap(221, Short.MAX_VALUE))
+        );
+        PanelInputMenu2Layout.setVerticalGroup(
+            PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputMenu2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelInputMenu1)
+                    .addComponent(LabelInputMenu5))
+                .addGap(2, 2, 2)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputMenu4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelInputMenu2)
+                    .addComponent(LabelInputMenu6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputMenu5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(LabelInputMenu3)
+                .addGap(4, 4, 4)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputMenu3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputMenu6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ButtonCari))
+                .addGap(30, 30, 30)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButtonSimpan)
+                    .addComponent(ButtonEdit)
+                    .addComponent(ButtonHapus))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        Tabel1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Kode Transaksi", "Nama Makanan", "Harga Beli", "Harga Jual", "Foto Makanan"
+            }
+        ));
+        TabelInputMenu.setViewportView(Tabel1);
 
         javax.swing.GroupLayout inputMenuLayout = new javax.swing.GroupLayout(inputMenu);
         inputMenu.setLayout(inputMenuLayout);
         inputMenuLayout.setHorizontalGroup(
             inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(PanelInputMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(inputMenuLayout.createSequentialGroup()
-                .addGap(267, 267, 267)
-                .addComponent(jLabel3)
-                .addContainerGap(386, Short.MAX_VALUE))
+                .addGap(19, 19, 19)
+                .addGroup(inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(PanelInputMenu2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(TabelInputMenu))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         inputMenuLayout.setVerticalGroup(
             inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inputMenuLayout.createSequentialGroup()
-                .addGap(129, 129, 129)
-                .addComponent(jLabel3)
-                .addContainerGap(365, Short.MAX_VALUE))
+                .addComponent(PanelInputMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(PanelInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(TabelInputMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         mainPanel.add(inputMenu, "card3");
@@ -424,7 +648,12 @@ public class Admin extends javax.swing.JFrame {
 
         historiPanel.setBackground(new java.awt.Color(254, 239, 210));
 
-        jTable1.setBackground(new java.awt.Color(255, 255, 255));
+        cari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cariActionPerformed(evt);
+            }
+        });
+
         jTable1.setForeground(new java.awt.Color(255, 255, 255));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -439,17 +668,13 @@ public class Admin extends javax.swing.JFrame {
         ));
         historiScrollPane.setViewportView(jTable1);
 
-        cariBtnHistori.setBackground(new java.awt.Color(255, 255, 255));
-        cariBtnHistori.setForeground(new java.awt.Color(80, 80, 80));
-        cariBtnHistori.setText("Cari");
-        cariBtnHistori.addActionListener(new java.awt.event.ActionListener() {
+        btnCari.setForeground(new java.awt.Color(80, 80, 80));
+        btnCari.setText("Cari");
+        btnCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariBtnHistoriActionPerformed(evt);
+                btnCariActionPerformed(evt);
             }
         });
-
-        cariTx.setBackground(new java.awt.Color(255, 255, 255));
-        cariTx.setForeground(new java.awt.Color(80, 80, 80));
 
         javax.swing.GroupLayout historiPanelLayout = new javax.swing.GroupLayout(historiPanel);
         historiPanel.setLayout(historiPanelLayout);
@@ -458,11 +683,11 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
                     .addGroup(historiPanelLayout.createSequentialGroup()
-                        .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cariBtnHistori, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCari)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(28, 28, 28))
         );
@@ -471,8 +696,8 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cariBtnHistori)
-                    .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCari))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
@@ -499,26 +724,206 @@ public class Admin extends javax.swing.JFrame {
 
         mainPanel.add(histori, "card4");
 
-        jLabel5.setText("Karyawan");
+        PanelInputUser1.setBackground(new java.awt.Color(255, 186, 134));
 
-        javax.swing.GroupLayout karyawanLayout = new javax.swing.GroupLayout(karyawan);
-        karyawan.setLayout(karyawanLayout);
-        karyawanLayout.setHorizontalGroup(
-            karyawanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(karyawanLayout.createSequentialGroup()
-                .addGap(151, 151, 151)
-                .addComponent(jLabel5)
-                .addContainerGap(513, Short.MAX_VALUE))
+        LabelInputUser1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        LabelInputUser1.setForeground(new java.awt.Color(255, 255, 255));
+        LabelInputUser1.setText("Input User");
+
+        javax.swing.GroupLayout PanelInputUser1Layout = new javax.swing.GroupLayout(PanelInputUser1);
+        PanelInputUser1.setLayout(PanelInputUser1Layout);
+        PanelInputUser1Layout.setHorizontalGroup(
+            PanelInputUser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputUser1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(LabelInputUser1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        karyawanLayout.setVerticalGroup(
-            karyawanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(karyawanLayout.createSequentialGroup()
-                .addGap(198, 198, 198)
-                .addComponent(jLabel5)
-                .addContainerGap(296, Short.MAX_VALUE))
+        PanelInputUser1Layout.setVerticalGroup(
+            PanelInputUser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputUser1Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(LabelInputUser1)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
-        mainPanel.add(karyawan, "card5");
+        PanelInputUser2.setBackground(new java.awt.Color(254, 239, 208));
+
+        FieldInputUser1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser1ActionPerformed(evt);
+            }
+        });
+
+        LabelInputUser2.setText("Kode User");
+
+        FieldInputUser2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser2ActionPerformed(evt);
+            }
+        });
+
+        FieldInputUser3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser3ActionPerformed(evt);
+            }
+        });
+
+        LabelInputUser3.setText("No. Hp");
+
+        LabelInputUser4.setText("Alamat");
+
+        FieldInputUser4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser4ActionPerformed(evt);
+            }
+        });
+
+        LabelInputUser5.setText("Username");
+
+        FieldInputUser5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser5ActionPerformed(evt);
+            }
+        });
+
+        LabelInputUser6.setText("Password");
+
+        FieldInputUser6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputUser6ActionPerformed(evt);
+            }
+        });
+
+        ButtonInputUserCari.setText("Cari");
+        ButtonInputUserCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonInputUserCariActionPerformed(evt);
+            }
+        });
+
+        ButtonInputUserSimpan.setText("Simpan");
+        ButtonInputUserSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonInputUserSimpanActionPerformed(evt);
+            }
+        });
+
+        ButtonInputUserEdit.setText("Edit");
+
+        ButtonInputUserHapus.setText("Hapus");
+
+        javax.swing.GroupLayout PanelInputUser2Layout = new javax.swing.GroupLayout(PanelInputUser2);
+        PanelInputUser2.setLayout(PanelInputUser2Layout);
+        PanelInputUser2Layout.setHorizontalGroup(
+            PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ButtonInputUserCari, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                    .addComponent(FieldInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputUser2)
+                    .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputUser5))
+                .addGap(31, 31, 31)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addComponent(LabelInputUser6)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LabelInputUser3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LabelInputUser4))
+                        .addGap(25, 25, 25))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelInputUser2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ButtonInputUserSimpan)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ButtonInputUserEdit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ButtonInputUserHapus)
+                .addGap(35, 35, 35))
+        );
+        PanelInputUser2Layout.setVerticalGroup(
+            PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelInputUser2)
+                    .addComponent(LabelInputUser3)
+                    .addComponent(LabelInputUser4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelInputUser5)
+                    .addComponent(LabelInputUser6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ButtonInputUserCari))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButtonInputUserSimpan)
+                    .addComponent(ButtonInputUserEdit)
+                    .addComponent(ButtonInputUserHapus))
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
+
+        TabelInputUser1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Kode User", "Username", "No Hp", "Alamat"
+            }
+        ));
+        TabelInputUser.setViewportView(TabelInputUser1);
+
+        javax.swing.GroupLayout InputUserLayout = new javax.swing.GroupLayout(InputUser);
+        InputUser.setLayout(InputUserLayout);
+        InputUserLayout.setHorizontalGroup(
+            InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(PanelInputUser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(InputUserLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(TabelInputUser)
+                    .addComponent(PanelInputUser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
+        InputUserLayout.setVerticalGroup(
+            InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InputUserLayout.createSequentialGroup()
+                .addComponent(PanelInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(PanelInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(TabelInputUser, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 8, Short.MAX_VALUE))
+        );
+
+        mainPanel.add(InputUser, "card5");
 
         ceteakBarccodePanel.setBackground(new java.awt.Color(254, 239, 208));
 
@@ -549,11 +954,6 @@ public class Admin extends javax.swing.JFrame {
 
         cariBtnBarcode.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         cariBtnBarcode.setLabel("Cari");
-        cariBtnBarcode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariBtnBarcodeActionPerformed(evt);
-            }
-        });
 
         kodeBarcode.setForeground(new java.awt.Color(80, 80, 80));
         kodeBarcode.setText("Kode Barcode");
@@ -584,7 +984,7 @@ public class Admin extends javax.swing.JFrame {
                             .addComponent(hapusBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(inputDiskonBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(kodeBarcode))
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addContainerGap(207, Short.MAX_VALUE))
         );
         ceteakBarccodePanelLayout.setVerticalGroup(
             ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -742,38 +1142,83 @@ public class Admin extends javax.swing.JFrame {
         mainPanel.repaint();
         mainPanel.revalidate();
         
-        mainPanel.add(karyawan);
+        mainPanel.add(InputUser);
         mainPanel.repaint();
         mainPanel.revalidate();
     }//GEN-LAST:event_karyawanBtnActionPerformed
 
-    private void cetakBarcodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cetakBarcodeBtnActionPerformed
-        // TODO add your handling code here:
-        mainPanel.removeAll();
-        mainPanel.repaint();
-        mainPanel.revalidate();
-        
-        mainPanel.add(cetakBarcode);
-        mainPanel.repaint();
-        mainPanel.revalidate();
-    }//GEN-LAST:event_cetakBarcodeBtnActionPerformed
 
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void FieldInputMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_FieldInputMenu1ActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void FieldInputMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_FieldInputMenu2ActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void FieldInputMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu3ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_FieldInputMenu3ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void FieldInputMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu4ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_FieldInputMenu4ActionPerformed
+
+    private void FieldInputMenu5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputMenu5ActionPerformed
+
+    private void FieldInputMenu6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputMenu6ActionPerformed
+
+    private void ButtonCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonCariActionPerformed
+
+    private void ButtonSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSimpanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonSimpanActionPerformed
+
+    private void ButtonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonEditActionPerformed
+
+    private void ButtonHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonHapusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonHapusActionPerformed
+
+    private void FieldInputUser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser1ActionPerformed
+
+    private void FieldInputUser2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser2ActionPerformed
+
+    private void FieldInputUser3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser3ActionPerformed
+
+    private void FieldInputUser4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser4ActionPerformed
+
+    private void FieldInputUser5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser5ActionPerformed
+
+    private void FieldInputUser6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputUser6ActionPerformed
+
+    private void ButtonInputUserCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonInputUserCariActionPerformed
+
+    private void ButtonInputUserSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserSimpanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonInputUserSimpanActionPerformed
 
     private void searchInputBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputBarcodeActionPerformed
         // TODO add your handling code here:
@@ -826,15 +1271,54 @@ public class Admin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ButtonCari;
+    private javax.swing.JButton ButtonEdit;
+    private javax.swing.JButton ButtonHapus;
+    private javax.swing.JButton ButtonInputUserCari;
+    private javax.swing.JButton ButtonInputUserEdit;
+    private javax.swing.JButton ButtonInputUserHapus;
+    private javax.swing.JButton ButtonInputUserSimpan;
+    private javax.swing.JButton ButtonSimpan;
     private java.awt.Button EditBtnBarcode;
+    private javax.swing.JTextField FieldInputMenu1;
+    private javax.swing.JTextField FieldInputMenu2;
+    private javax.swing.JTextField FieldInputMenu3;
+    private javax.swing.JTextField FieldInputMenu4;
+    private javax.swing.JTextField FieldInputMenu5;
+    private javax.swing.JTextField FieldInputMenu6;
+    private javax.swing.JTextField FieldInputUser1;
+    private javax.swing.JTextField FieldInputUser2;
+    private javax.swing.JTextField FieldInputUser3;
+    private javax.swing.JTextField FieldInputUser4;
+    private javax.swing.JTextField FieldInputUser5;
+    private javax.swing.JTextField FieldInputUser6;
+    private javax.swing.JPanel InputUser;
+    private javax.swing.JLabel LabelInputMenu1;
+    private javax.swing.JLabel LabelInputMenu2;
+    private javax.swing.JLabel LabelInputMenu3;
+    private javax.swing.JLabel LabelInputMenu5;
+    private javax.swing.JLabel LabelInputMenu6;
+    private javax.swing.JLabel LabelInputUser1;
+    private javax.swing.JLabel LabelInputUser2;
+    private javax.swing.JLabel LabelInputUser3;
+    private javax.swing.JLabel LabelInputUser4;
+    private javax.swing.JLabel LabelInputUser5;
+    private javax.swing.JLabel LabelInputUser6;
+    private javax.swing.JPanel PanelInputMenu1;
+    private javax.swing.JPanel PanelInputMenu2;
+    private javax.swing.JPanel PanelInputUser1;
+    private javax.swing.JPanel PanelInputUser2;
+    private javax.swing.JTable Tabel1;
+    private javax.swing.JScrollPane TabelInputMenu;
+    private javax.swing.JScrollPane TabelInputUser;
+    private javax.swing.JTable TabelInputUser1;
     private javax.swing.JPanel barcodeNav;
     private javax.swing.JLabel barcodeNavLabel;
     private javax.swing.JTable barcodeTabel;
+    private javax.swing.JButton btnCari;
+    private javax.swing.JTextField cari;
     private java.awt.Button cariBtnBarcode;
-    private javax.swing.JButton cariBtnHistori;
-    private javax.swing.JTextField cariTx;
     private javax.swing.JPanel cetakBarcode;
-    private javax.swing.JButton cetakBarcodeBtn;
     private javax.swing.JPanel ceteakBarccodePanel;
     private chart.CurveLineChart curveLineChart1;
     private javax.swing.JPanel dashboard;
@@ -859,15 +1343,15 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneBarcode;
     private javax.swing.JTable jTable1;
-    private javax.swing.JPanel karyawan;
+    private javax.swing.JTable jTable2;
     private javax.swing.JButton karyawanBtn;
     private javax.swing.JLabel kodeBarcode;
     private javax.swing.JButton logOutBtn;
