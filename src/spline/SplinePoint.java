@@ -1,4 +1,4 @@
-package spline;
+    package spline;
 
 public class SplinePoint {
 
