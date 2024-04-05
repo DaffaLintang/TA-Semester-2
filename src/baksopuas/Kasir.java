@@ -8,16 +8,23 @@ import com.mysql.jdbc.Blob;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -26,6 +33,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 /**
  *
@@ -188,6 +199,7 @@ public void totalBiaya() {
         kembalian = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -291,7 +303,7 @@ public void totalBiaya() {
 
             },
             new String [] {
-                "Nama Makanan", "Jumlah", "Harga"
+                "Nama Makanan", "Jumlah", "Harga",
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -342,6 +354,14 @@ public void totalBiaya() {
             }
         });
 
+        jButton3.setForeground(new java.awt.Color(80, 80, 80));
+        jButton3.setText("Cetak");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout roundedJpanel2Layout = new javax.swing.GroupLayout(roundedJpanel2);
         roundedJpanel2.setLayout(roundedJpanel2Layout);
         roundedJpanel2Layout.setHorizontalGroup(
@@ -353,8 +373,9 @@ public void totalBiaya() {
                 .addContainerGap()
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                        .addGap(89, 89, 89)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(15, 15, 15)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(roundedJpanel2Layout.createSequentialGroup()
@@ -411,7 +432,8 @@ public void totalBiaya() {
                 .addGap(18, 18, 18)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addGap(26, 26, 26))
         );
 
@@ -469,9 +491,143 @@ public void totalBiaya() {
          DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         int row = jTable1.getSelectedRow();
         model.removeRow(row);
-        total.setText("0");
+        totalBiaya(); 
        
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        if(bayarTx.getText().length() > 0){
+             try {
+            PDDocument document  = new PDDocument();
+            PDPage page = new PDPage();
+            Date today = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = formatter.format(today);
+            document.addPage(page);
+            int startX = 20;
+            int startY = 600;
+            int rowHeight = 20;
+            int tableWidth = 500;
+            int colWidth = tableWidth / 3;
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            PDType0Font font = PDType0Font.load(document, new File("C:\\Users\\Daffa Lintang\\Downloads\\font\\Helvetica.ttf"));
+            
+            contentStream.setFont(font, 16);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(20, 700);
+            contentStream.showText("                                Bakso Puas");
+            contentStream.endText();
+            
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(20, 680);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(20, 660);
+             contentStream.showText("Kode Transaksi : "+1);
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(20, 640);
+             contentStream.showText("Tanggal : "+formattedDate);
+             contentStream.newLine();
+             contentStream.endText();
+            
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(20, 620);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
+             contentStream.newLine();
+             contentStream.endText();
+            
+            contentStream.setNonStrokingColor(0,0,0);
+            contentStream.setFont(font, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(startX, startY);
+            contentStream.showText("Nama");
+            contentStream.newLineAtOffset(colWidth, 0);
+            contentStream.showText("Jumlah");
+            contentStream.newLineAtOffset(colWidth, 0);
+            contentStream.showText("Harga");
+            contentStream.newLineAtOffset(colWidth, 0);  
+            contentStream.endText();
+            
+            contentStream.setNonStrokingColor(0,0,0);
+            contentStream.setFont(font, 12);
+            for(int i = 0; i < jTable1.getRowCount(); i++){
+                contentStream.beginText();
+                contentStream.newLineAtOffset(startX, startY -(i + 1)* rowHeight);
+                contentStream.showText(jTable1.getValueAt(i, 0).toString());
+                contentStream.newLineAtOffset(colWidth, 0);
+                contentStream.showText(jTable1.getValueAt(i, 1).toString());
+                contentStream.newLineAtOffset(colWidth, 0);
+                contentStream.showText(jTable1.getValueAt(i, 2).toString());
+                contentStream.newLineAtOffset(colWidth, 0);
+                contentStream.endText();
+           
+            }
+            
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() +1)  * rowHeight);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 2)  * rowHeight);
+             contentStream.showText("Total :" + total.getText());
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 3)  * rowHeight);
+             contentStream.showText("Bayar : Rp " + bayarTx.getText());
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 12);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 4)  * rowHeight);
+             contentStream.showText("Kembalian :" + kembalian.getText());
+             contentStream.newLine();
+             contentStream.endText();
+             
+             contentStream.close();
+             
+             document.save("C:\\daffa\\Struk.pdf");
+
+             document.close();
+             FileDialog fileDialog = new FileDialog((Frame) null, "Open File", FileDialog.LOAD);
+             fileDialog.setDirectory("C:\\daffa");
+             fileDialog.setFile("Struk.pdf");
+              JOptionPane.showMessageDialog(null, "Struk Berhasil Di Cetak");
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+        } else {
+            JOptionPane.showMessageDialog(null, "Bayar Terlebih Dahulu");
+        }
+       
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -512,6 +668,7 @@ public void totalBiaya() {
     private javax.swing.JTextField bayarTx;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -522,7 +679,7 @@ public void totalBiaya() {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
+    public javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField kembalian;
     private javax.swing.JPanel menuContainer;

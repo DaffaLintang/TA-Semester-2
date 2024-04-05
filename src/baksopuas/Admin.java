@@ -101,6 +101,8 @@ public class Admin extends javax.swing.JFrame {
         ButtonInputUserSimpan = new javax.swing.JButton();
         ButtonInputUserEdit = new javax.swing.JButton();
         ButtonInputUserHapus = new javax.swing.JButton();
+        roleTx = new javax.swing.JTextField();
+        inputRole = new javax.swing.JLabel();
         TabelInputUser = new javax.swing.JScrollPane();
         TabelInputUser1 = new javax.swing.JTable();
         cetakBarcode = new javax.swing.JPanel();
@@ -750,6 +752,7 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
+        LabelInputUser2.setForeground(new java.awt.Color(80, 80, 80));
         LabelInputUser2.setText("Kode User");
 
         FieldInputUser2.addActionListener(new java.awt.event.ActionListener() {
@@ -764,8 +767,10 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
+        LabelInputUser3.setForeground(new java.awt.Color(80, 80, 80));
         LabelInputUser3.setText("No. Hp");
 
+        LabelInputUser4.setForeground(new java.awt.Color(80, 80, 80));
         LabelInputUser4.setText("Alamat");
 
         FieldInputUser4.addActionListener(new java.awt.event.ActionListener() {
@@ -774,6 +779,7 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
+        LabelInputUser5.setForeground(new java.awt.Color(80, 80, 80));
         LabelInputUser5.setText("Username");
 
         FieldInputUser5.addActionListener(new java.awt.event.ActionListener() {
@@ -782,6 +788,7 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
+        LabelInputUser6.setForeground(new java.awt.Color(80, 80, 80));
         LabelInputUser6.setText("Password");
 
         FieldInputUser6.addActionListener(new java.awt.event.ActionListener() {
@@ -808,6 +815,15 @@ public class Admin extends javax.swing.JFrame {
 
         ButtonInputUserHapus.setText("Hapus");
 
+        roleTx.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roleTxActionPerformed(evt);
+            }
+        });
+
+        inputRole.setForeground(new java.awt.Color(80, 80, 80));
+        inputRole.setText("Role");
+
         javax.swing.GroupLayout PanelInputUser2Layout = new javax.swing.GroupLayout(PanelInputUser2);
         PanelInputUser2.setLayout(PanelInputUser2Layout);
         PanelInputUser2Layout.setHorizontalGroup(
@@ -818,28 +834,24 @@ public class Admin extends javax.swing.JFrame {
                     .addGroup(PanelInputUser2Layout.createSequentialGroup()
                         .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ButtonInputUserCari, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                        .addComponent(ButtonInputUserCari, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(FieldInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputUser2)
                     .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputUser5))
                 .addGap(31, 31, 31)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
-                        .addComponent(LabelInputUser6)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
-                        .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
-                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(LabelInputUser3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(LabelInputUser4))
-                        .addGap(25, 25, 25))))
+                    .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputUser3)
+                    .addComponent(LabelInputUser6)
+                    .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelInputUser4)
+                    .addComponent(roleTx, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputRole))
+                .addGap(25, 25, 25))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelInputUser2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButtonInputUserSimpan)
@@ -863,13 +875,19 @@ public class Admin extends javax.swing.JFrame {
                     .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(22, 22, 22)
-                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabelInputUser5)
-                    .addComponent(LabelInputUser6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LabelInputUser5)
+                            .addComponent(LabelInputUser6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addComponent(inputRole)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(roleTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(38, 38, 38)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -884,15 +902,23 @@ public class Admin extends javax.swing.JFrame {
 
         TabelInputUser1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Kode User", "Username", "No Hp", "Alamat"
+                "Kode User", "Username", "No Hp", "Alamat", "Role"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         TabelInputUser.setViewportView(TabelInputUser1);
 
         javax.swing.GroupLayout InputUserLayout = new javax.swing.GroupLayout(InputUser);
@@ -1112,6 +1138,9 @@ public class Admin extends javax.swing.JFrame {
 
     private void logOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutBtnActionPerformed
         // TODO add your handling code here:
+        Login x = new Login();
+        x.setVisible(true);
+        dispose();
     }//GEN-LAST:event_logOutBtnActionPerformed
 
     private void homeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnActionPerformed
@@ -1240,6 +1269,10 @@ public class Admin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cariBtnHistoriActionPerformed
 
+    private void roleTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roleTxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_roleTxActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -1339,6 +1372,7 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JTextField inputKodeBarcode;
     private javax.swing.JPanel inputMenu;
     private javax.swing.JButton inputMenuBtn;
+    private javax.swing.JLabel inputRole;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1359,6 +1393,7 @@ public class Admin extends javax.swing.JFrame {
     private baksopuas.roundedJpanelShadow pemasukan;
     private baksopuas.roundedJpanelShadow pengeluaran;
     private baksopuas.roundedJpanelShadow profit;
+    private javax.swing.JTextField roleTx;
     private java.awt.Button saveBtnBarcode;
     private javax.swing.JTextField searchInputBarcode;
     private javax.swing.JPanel sideBar;
