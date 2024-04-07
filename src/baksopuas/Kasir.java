@@ -5,6 +5,7 @@
 package baksopuas;
 
 import com.mysql.jdbc.Blob;
+import com.mysql.jdbc.PreparedStatement;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,13 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -165,6 +163,12 @@ public void totalBiaya() {
         loadMenu();
         getDate();
         addData();
+        
+//        if(model.getRowCount() != -1){
+            jButton3.setEnabled(false);
+//        }else{
+//              jButton1.setEnabled(true);
+//        }
     }
 
     /**
@@ -474,6 +478,10 @@ public void totalBiaya() {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+         if(bayarTx.getText().length() > 0){
+              Date today = new Date();
+            SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy/MM/dd");
+            String formattedDate1 = formatter1.format(today);
         String bayar = bayarTx.getText().toString();
         int intBayar = Integer.parseInt(bayar);
         String totalBayar = total.getText().replace("Rp ", "").replace(",00", "");
@@ -483,22 +491,59 @@ public void totalBiaya() {
             JOptionPane.showMessageDialog(null, "Uang Pembayaran Kurang");
         }else{
             kembalian.setText("Rp "+String.valueOf(totalKembalian));
+            try {
+                 Connection c = Koneksi.getKoneksi();
+                 String kembalianInt = kembalian.getText().replaceAll("[^\\d.-]", "");
+                 String totalnInt = total.getText().replaceAll("[^\\d.-]", "");
+                String sql = "INSERT INTO transaksi( total, kembalian, tanggal) VALUES (?,?,?)";
+                java.sql.PreparedStatement p = c.prepareStatement(sql);;
+                p.setString(1, String.valueOf(totalnInt));
+                p.setString(2, String.valueOf(kembalianInt));
+                p.setString(3, String.valueOf(formattedDate1));
+                p.executeUpdate();
+                p.close();
+                
+             } catch(Exception ex) {
+                 System.out.println(ex);
+             }
+            jButton3.setEnabled(true);
         }
+         }else {
+              JOptionPane.showMessageDialog(null, "Masukkan jumlah yang dibayar");
+         }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
          DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
-        int row = jTable1.getSelectedRow();
-        model.removeRow(row);
-        totalBiaya(); 
-       
+         if( jTable1.getSelectedRow() != -1){
+              int row = jTable1.getSelectedRow();
+              model.removeRow(row);
+              totalBiaya(); 
+         }else {
+              JOptionPane.showMessageDialog(null, "Pilih menu yanng akan dihapus");
+         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+       int kodeTransaksi = 0;
+       DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         if(bayarTx.getText().length() > 0){
              try {
+                 try{
+                     Connection c = Koneksi.getKoneksi();
+                      java.sql.Statement s = c.createStatement();
+                      String sql3 = "SELECT kode_transaksi FROM transaksi ORDER BY kode_transaksi DESC LIMIT 1";
+                      ResultSet r = s.executeQuery(sql3);
+                      while(r.next()){
+                         kodeTransaksi = r.getInt("kode_transaksi");
+                          System.out.println(kodeTransaksi);
+                      }
+                 }catch(Exception e){
+                     System.out.println(e);
+                 }
             PDDocument document  = new PDDocument();
             PDPage page = new PDPage();
             Date today = new Date();
@@ -510,6 +555,7 @@ public void totalBiaya() {
             int rowHeight = 20;
             int tableWidth = 500;
             int colWidth = tableWidth / 3;
+         
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             PDType0Font font = PDType0Font.load(document, new File("C:\\Users\\Daffa Lintang\\Downloads\\font\\Helvetica.ttf"));
             
@@ -531,7 +577,7 @@ public void totalBiaya() {
              contentStream.setFont(font, 12);
              contentStream.beginText();
              contentStream.newLineAtOffset(20, 660);
-             contentStream.showText("Kode Transaksi : "+1);
+             contentStream.showText("Kode Transaksi : "+kodeTransaksi);
              contentStream.newLine();
              contentStream.endText();
              
@@ -562,7 +608,6 @@ public void totalBiaya() {
             contentStream.showText("Harga");
             contentStream.newLineAtOffset(colWidth, 0);  
             contentStream.endText();
-            
             contentStream.setNonStrokingColor(0,0,0);
             contentStream.setFont(font, 12);
             for(int i = 0; i < jTable1.getRowCount(); i++){
@@ -575,7 +620,34 @@ public void totalBiaya() {
                 contentStream.showText(jTable1.getValueAt(i, 2).toString());
                 contentStream.newLineAtOffset(colWidth, 0);
                 contentStream.endText();
-           
+                
+                try {
+                     Connection c = Koneksi.getKoneksi();
+                      String sql2 = "SELECT kode_makanan FROM menu WHERE nama_makanan = ?";
+                      java.sql.PreparedStatement ps = c.prepareStatement(sql2);
+                        String jumlah = jTable1.getValueAt(i, 1).toString();
+                        for(int x =0; x < Integer.parseInt(jumlah); x++){
+                            ps.setString(1, jTable1.getValueAt(i, 0).toString());
+                            ResultSet r = ps.executeQuery();
+                        while(r.next()){
+                            
+                            try{
+                               String sql1 = "INSERT INTO detail_transaksi(kode_transaksi, kode_makanan) VALUES (?,?)";
+                               java.sql.PreparedStatement p1 = c.prepareStatement(sql1);
+                               p1.setString(1, String.valueOf(kodeTransaksi));
+                               p1.setString(2, String.valueOf(r.getInt("kode_makanan")));
+                               p1.executeUpdate();
+                               p1.close(); 
+                            }catch (Exception e){
+                                System.out.println(e);   
+                            }
+                        }
+                        
+                    }
+                }catch(Exception e){
+                    System.out.println(e);
+                }
+                
             }
             
              contentStream.setNonStrokingColor(0,0,0);
@@ -590,7 +662,7 @@ public void totalBiaya() {
              contentStream.setFont(font, 12);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 2)  * rowHeight);
-             contentStream.showText("Total :" + total.getText());
+             contentStream.showText("Total : " + total.getText());
              contentStream.newLine();
              contentStream.endText();
              
@@ -618,15 +690,22 @@ public void totalBiaya() {
              FileDialog fileDialog = new FileDialog((Frame) null, "Open File", FileDialog.LOAD);
              fileDialog.setDirectory("C:\\daffa");
              fileDialog.setFile("Struk.pdf");
-              JOptionPane.showMessageDialog(null, "Struk Berhasil Di Cetak");
+             JOptionPane.showMessageDialog(null, "Struk Berhasil Di Cetak");
+             bayarTx.setText("");
+             total.setText("");
+             kembalian.setText("");
         } catch (IOException ex) {
             System.out.println(ex);
         }
+               while(model.getRowCount() > 0){
+             model.removeRow(0);
+        }
         } else {
             JOptionPane.showMessageDialog(null, "Bayar Terlebih Dahulu");
+            jButton3.setEnabled(false);
         }
-       
-        
+      
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
