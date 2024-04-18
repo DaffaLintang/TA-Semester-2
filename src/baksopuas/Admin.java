@@ -4,6 +4,14 @@
  */
 package baksopuas;
 
+import chart.ModelChart;
+import java.awt.Color;
+import java.sql.ResultSet;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 /**
  *
  * @author Daffa Lintang
@@ -13,8 +21,65 @@ public class Admin extends javax.swing.JFrame {
     /**
      * Creates new form Admin
      */
+    public void hitungKeuntungan(){
+        try{
+        java.sql.Connection c = Koneksi.getKoneksi();
+        java.sql.Statement s = c.createStatement();
+        
+        String sql = "SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit FROM detail_transaksi INNER JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan";
+        ResultSet r = s.executeQuery(sql);
+        
+        while(r.next()){
+            Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String profit = formatRupiah.format(r.getInt("profit"));
+            String pengeluaran = formatRupiah.format(r.getInt("total_pengeluaran"));
+            String pemasukan = formatRupiah.format(r.getInt("total_pendapatan"));
+            profitTx.setText(profit);
+            pemasukanTx.setText(pemasukan);
+            pengeluaranTx.setText(pengeluaran);
+        }  
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        
+    }
+    
+    public void chartData(){
+        try{
+        java.sql.Connection c = Koneksi.getKoneksi();
+        java.sql.Statement s = c.createStatement();
+        List<ModelData> list = new ArrayList<>();
+        String sql = "SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit, DATE_FORMAT(tanggal,'%d-%M-%Y') as `Date` FROM detail_transaksi  JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi group by DATE_FORMAT(tanggal,'%d%M%Y') order by tanggal DESC limit 7;";
+        ResultSet r = s.executeQuery(sql);
+        while(r.next()){
+             String month = r.getString("Date");
+             double pengeluaran = (double) r.getInt("total_pengeluaran");
+             double pendapatan = (double) r.getInt("total_pendapatan");
+             double profit = (double) r.getInt("profit");
+             list.add(new ModelData(month, pengeluaran, pendapatan, profit));
+        }
+        r.close();
+        s.close();
+            
+        for(int i = list.size()-1; i>=0 ; i--){
+            ModelData d = list.get(i);
+            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getPengeluaran(), d.getPendapatan(), d.getProfit()}));
+        }
+        chart.start();
+        } catch(Exception e){
+            System.out.println(e);
+        }
+      
+    }
     public Admin() {
         initComponents();
+        chart.setTitle("Grafik Penjualan");
+        chart.addLegend("Pengeluaran", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Pendapatan", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
+       hitungKeuntungan();
+       chartData();
     }
 
     /**
@@ -43,16 +108,15 @@ public class Admin extends javax.swing.JFrame {
         statistikPanel = new javax.swing.JPanel();
         profit = new baksopuas.roundedJpanelShadow();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        profitTx = new javax.swing.JLabel();
         pengeluaran = new baksopuas.roundedJpanelShadow();
         jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        pengeluaranTx = new javax.swing.JLabel();
         pemasukan = new baksopuas.roundedJpanelShadow();
         jLabel8 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        pemasukanTx = new javax.swing.JLabel();
         grafikPanel = new javax.swing.JPanel();
-        curveLineChart1 = new chart.CurveLineChart();
-        grafikLabel = new javax.swing.JLabel();
+        chart = new chart.CurveLineChart();
         inputMenu = new javax.swing.JPanel();
         PanelInputMenu1 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
@@ -237,21 +301,21 @@ public class Admin extends javax.swing.JFrame {
         jLabel9.setForeground(new java.awt.Color(80, 80, 80));
         jLabel9.setText("Profit");
 
-        jLabel10.setBackground(new java.awt.Color(80, 80, 80));
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(80, 80, 80));
-        jLabel10.setText("Rp. 90.000");
+        profitTx.setBackground(new java.awt.Color(80, 80, 80));
+        profitTx.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        profitTx.setForeground(new java.awt.Color(80, 80, 80));
+        profitTx.setText("Rp. 90.000");
 
         javax.swing.GroupLayout profitLayout = new javax.swing.GroupLayout(profit);
         profit.setLayout(profitLayout);
         profitLayout.setHorizontalGroup(
             profitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(profitLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(15, 15, 15)
                 .addGroup(profitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE))
-                .addGap(27, 27, 27))
+                    .addComponent(profitTx, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                .addGap(18, 18, 18))
         );
         profitLayout.setVerticalGroup(
             profitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +323,7 @@ public class Admin extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(profitTx, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -271,10 +335,10 @@ public class Admin extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(80, 80, 80));
         jLabel11.setText("Pengeluaran");
 
-        jLabel12.setBackground(new java.awt.Color(80, 80, 80));
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(80, 80, 80));
-        jLabel12.setText("Rp. 90.000");
+        pengeluaranTx.setBackground(new java.awt.Color(80, 80, 80));
+        pengeluaranTx.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        pengeluaranTx.setForeground(new java.awt.Color(80, 80, 80));
+        pengeluaranTx.setText("Rp. 90.000");
 
         javax.swing.GroupLayout pengeluaranLayout = new javax.swing.GroupLayout(pengeluaran);
         pengeluaran.setLayout(pengeluaranLayout);
@@ -283,10 +347,10 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(pengeluaranLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pengeluaranTx, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                     .addGroup(pengeluaranLayout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
+                        .addGap(0, 35, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pengeluaranLayout.setVerticalGroup(
@@ -294,9 +358,9 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pengeluaranLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel11)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pengeluaranTx, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pemasukan.setBackground(new java.awt.Color(244, 242, 255));
@@ -306,22 +370,22 @@ public class Admin extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(80, 80, 80));
         jLabel8.setText("Pemasukan");
 
-        jLabel7.setBackground(new java.awt.Color(80, 80, 80));
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(80, 80, 80));
-        jLabel7.setText("Rp. 90.000");
+        pemasukanTx.setBackground(new java.awt.Color(80, 80, 80));
+        pemasukanTx.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        pemasukanTx.setForeground(new java.awt.Color(80, 80, 80));
+        pemasukanTx.setText("Rp. 90.000");
 
         javax.swing.GroupLayout pemasukanLayout = new javax.swing.GroupLayout(pemasukan);
         pemasukan.setLayout(pemasukanLayout);
         pemasukanLayout.setHorizontalGroup(
             pemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pemasukanLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(15, 15, 15)
                 .addGroup(pemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pemasukanTx, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pemasukanLayout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 8, Short.MAX_VALUE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 32, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pemasukanLayout.setVerticalGroup(
@@ -330,8 +394,8 @@ public class Admin extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pemasukanTx, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout statistikPanelLayout = new javax.swing.GroupLayout(statistikPanel);
@@ -345,7 +409,7 @@ public class Admin extends javax.swing.JFrame {
                 .addComponent(pengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(pemasukan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(17, 17, 17))
+                .addContainerGap())
         );
         statistikPanelLayout.setVerticalGroup(
             statistikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -360,13 +424,8 @@ public class Admin extends javax.swing.JFrame {
 
         grafikPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        curveLineChart1.setBackground(new java.awt.Color(80, 80, 80));
-        curveLineChart1.setForeground(new java.awt.Color(80, 80, 80));
-
-        grafikLabel.setBackground(new java.awt.Color(80, 80, 80));
-        grafikLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        grafikLabel.setForeground(new java.awt.Color(80, 80, 80));
-        grafikLabel.setText("Grafik Penjualan");
+        chart.setBackground(new java.awt.Color(80, 80, 80));
+        chart.setForeground(new java.awt.Color(80, 80, 80));
 
         javax.swing.GroupLayout grafikPanelLayout = new javax.swing.GroupLayout(grafikPanel);
         grafikPanel.setLayout(grafikPanelLayout);
@@ -374,20 +433,14 @@ public class Admin extends javax.swing.JFrame {
             grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(grafikPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(curveLineChart1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(grafikPanelLayout.createSequentialGroup()
-                        .addComponent(grafikLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE)
                 .addContainerGap())
         );
         grafikPanelLayout.setVerticalGroup(
             grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grafikPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(grafikLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(curveLineChart1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout dashboardLayout = new javax.swing.GroupLayout(dashboard);
@@ -399,8 +452,9 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(dashboardLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(grafikPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(20, 20, 20))
+                        .addContainerGap())
                     .addGroup(dashboardLayout.createSequentialGroup()
                         .addComponent(statistikPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(10, 10, 10))))
@@ -411,9 +465,9 @@ public class Admin extends javax.swing.JFrame {
                 .addComponent(dashboardNav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(statistikPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(grafikPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(22, 22, 22))
+                .addContainerGap())
         );
 
         mainPanel.add(dashboard, "card2");
@@ -931,7 +985,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGroup(InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(TabelInputUser)
                     .addComponent(PanelInputUser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         InputUserLayout.setVerticalGroup(
             InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1152,6 +1206,8 @@ public class Admin extends javax.swing.JFrame {
         mainPanel.add(dashboard);
         mainPanel.repaint();
         mainPanel.revalidate();
+        hitungKeuntungan();
+        chartData();
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void historiBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historiBtnActionPerformed
@@ -1353,12 +1409,11 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JTextField cariTx;
     private javax.swing.JPanel cetakBarcode;
     private javax.swing.JPanel ceteakBarccodePanel;
-    private chart.CurveLineChart curveLineChart1;
+    private chart.CurveLineChart chart;
     private javax.swing.JPanel dashboard;
     private javax.swing.JLabel dashboardLabel;
     private javax.swing.JPanel dashboardNav;
     private javax.swing.JLabel diskonBarcode;
-    private javax.swing.JLabel grafikLabel;
     private javax.swing.JPanel grafikPanel;
     private java.awt.Button hapusBtnBarcode;
     private javax.swing.JPanel histori;
@@ -1374,11 +1429,8 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JButton inputMenuBtn;
     private javax.swing.JLabel inputRole;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -1391,8 +1443,11 @@ public class Admin extends javax.swing.JFrame {
     private javax.swing.JButton logOutBtn;
     private javax.swing.JPanel mainPanel;
     private baksopuas.roundedJpanelShadow pemasukan;
+    private javax.swing.JLabel pemasukanTx;
     private baksopuas.roundedJpanelShadow pengeluaran;
+    private javax.swing.JLabel pengeluaranTx;
     private baksopuas.roundedJpanelShadow profit;
+    private javax.swing.JLabel profitTx;
     private javax.swing.JTextField roleTx;
     private java.awt.Button saveBtnBarcode;
     private javax.swing.JTextField searchInputBarcode;
