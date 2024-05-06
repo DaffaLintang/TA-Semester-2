@@ -5,126 +5,27 @@
 package baksopuas;
 
 import chart.ModelChart;
-import com.mysql.jdbc.Blob;
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.Statement;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.awt.Graphics2D;
+import java.security.Timestamp;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import java.util.Date;
 import javax.swing.table.DefaultTableModel;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.Timestamp;
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
+
 /**
  *
  * @author Daffa Lintang
  */
 public class Admin extends javax.swing.JFrame {
-    
-    private DefaultTableModel modelMenu;
-    private DefaultTableModel modelHistori;
+   private DefaultTableModel modelHistori;
     /**
      * Creates new form Admin
      */
-    
-    String pathMenu = null;
-    
-    
-    public void autoNumberMenu(){
-        try{
-            java.sql.Connection c = Koneksi.getKoneksi();
-            java.sql.Statement s = c.createStatement();
-            
-            String sql = "SELECT kode_makanan FROM menu order by kode_makanan DESC";
-            ResultSet r = s.executeQuery(sql);
-            
-            if(r.next()){
-                String kodeMakanan = r.getString("kode_makanan");
-                int kdMakanan = Integer.parseInt(kodeMakanan);
-                FieldInputMenu1.setText(String.valueOf(kdMakanan +1));
-            }
-        }catch(Exception e){
-            System.out.println(e);
-        }
-    }
-    
-    public void loadDataMenu(){
-        modelMenu.getDataVector().removeAllElements();
-        modelMenu.fireTableDataChanged();
-        
-        try{
-            java.sql.Connection c = Koneksi.getKoneksi();
-            java.sql.Statement s = c.createStatement();
-            
-            String sql = "SELECT * FROM menu order by kode_makanan DESC";
-            ResultSet r = s.executeQuery(sql);
-            
-            while(r.next()){
-                Object[] o = new Object[5];
-            o[0] = r.getString("kode_makanan");
-            o[1] = r.getString("nama_makanan");
-            o[2] = r.getString("harga_beli");
-            o[3] = r.getString("harga_jual");
-            byte[] imageData = r.getBytes("foto_makanan");
-            ImageIcon imageIcon = new ImageIcon(imageData);
-            o[4] = imageIcon;
-
-            modelMenu.addRow(o);    
-            }
-            r.close();
-            s.close();
-        }catch(Exception e){
-            System.out.println(e);
-        }
-    }
-    
-    public void setTableRenderMenu(){
-        class CustomRenderer extends DefaultTableCellRenderer {
-        
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if(value instanceof ImageIcon){
-             ImageIcon icon =(ImageIcon) value;
-             Image originImage =icon.getImage();
-             
-             int width = 200;
-             int height = 120;
-             
-             Image resizedImage = originImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-             ImageIcon resizedIcon = new ImageIcon(resizedImage);
-             
-             JLabel label = new JLabel(resizedIcon);
-             label.setHorizontalAlignment(JLabel.CENTER);
-             
-             return label;
-            }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-        tabelMenu.getColumnModel().getColumn(4).setCellRenderer(new CustomRenderer());
-    }
-     
-    
     public void hitungKeuntungan(){
         try{
         java.sql.Connection c = Koneksi.getKoneksi();
@@ -154,7 +55,7 @@ public class Admin extends javax.swing.JFrame {
         java.sql.Connection c = Koneksi.getKoneksi();
         java.sql.Statement s = c.createStatement();
         List<ModelData> list = new ArrayList<>();
-        String sql = "SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit, DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y') as `Date` FROM detail_transaksi JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi GROUP BY DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y'), transaksi.tanggal ORDER BY transaksi.tanggal DESC LIMIT 7";
+        String sql = "SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit, DATE_FORMAT(tanggal,'%d-%M-%Y') as `Date` FROM detail_transaksi  JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi group by DATE_FORMAT(tanggal,'%d%M%Y') order by tanggal DESC limit 7;";
         ResultSet r = s.executeQuery(sql);
         while(r.next()){
              String month = r.getString("Date");
@@ -174,36 +75,38 @@ public class Admin extends javax.swing.JFrame {
         } catch(Exception e){
             System.out.println(e);
         }
+      
     }
-    
+ 
     public void loadHistori(){
+        initcomponent();
         try {
-            java.sql.Connection c = Koneksi.getKoneksi();
-            java.sql.Statement s = c.createStatement();
+            Connection conn = (Connection) Koneksi.getKoneksi();
+            Statement stmt = (Statement) conn.createStatement();
             String sql = "SELECT ROW_NUMBER() OVER (ORDER BY detail_transaksi.kode_transaksi) AS nomor, detail_transaksi.kode_transaksi, menu.nama_makanan, COUNT(menu.nama_makanan) AS jumlah, menu.harga_beli, menu.harga_jual, transaksi.tanggal FROM detail_transaksi INNER JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi INNER JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan GROUP BY detail_transaksi.kode_transaksi, menu.nama_makanan, menu.harga_beli, menu.harga_jual, transaksi.tanggal";
-            ResultSet rs = s.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                Object[] o = new Object[7];
-                o[0] = rs.getInt("nomor");
-                o[1] = rs.getInt("kode_transaksi");
-                o[2] = rs.getString("nama_makanan");
-                o[3] = rs.getInt("jumlah");
-                o[4] = rs.getInt("harga_beli");
-                o[5] = rs.getInt("harga_jual");
-                o[6] = rs.getString("tanggal");
+                int no = rs.getInt("no");
+                int kode_transaksi = rs.getInt("kode_transaksi");
+                String nama_makanan = rs.getString("nama_makanan");
+                int jumlah = rs.getInt("jumlah");
+                int harga_beli = rs.getInt("harga_beli");
+                int harga_jual = rs.getInt("harga_jual");
+                Timestamp datetime = resultSet.getTimestamp("tanggal");
                 
-                modelHistori.addRow(o);
+                // Lakukan sesuatu dengan data yang diperoleh, misalnya tampilkan di konsol
+                System.out.println("Nomor: " + no + ", Kode Transaksi: " + kode_transaksi + ", Nama Makanan: " + nama_makanan + ", Jumlah: " + jumlah + ", Harga Beli: " + harga_beli + ", Harga Jual: " + harga_jual + ", Tanggal: " + datetime);
         }
 
             // Jangan lupa untuk menutup koneksi dan objek statement serta result set setelah selesai
             rs.close();
-           s.close();
+            stmt.close();
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }    
     }
-    
     public Admin() {
         initComponents();
         chart.setTitle("Grafik Penjualan");
@@ -212,32 +115,6 @@ public class Admin extends javax.swing.JFrame {
         chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
        hitungKeuntungan();
        chartData();
-       
-       modelMenu = new DefaultTableModel();
-       tabelMenu.setRowHeight(100);
-       tabelMenu.setModel(modelMenu);
-       
-       modelMenu.addColumn("Kode Makanan");
-       modelMenu.addColumn("Nama Makanan");
-       modelMenu.addColumn("Harga Beli");
-       modelMenu.addColumn("Harga Jual");
-       modelMenu.addColumn("Foto Makanan");
-       loadDataMenu();
-       setTableRenderMenu();
-       autoNumberMenu();
-       
-       modelHistori = new DefaultTableModel();
-       tabelHistori.setModel(modelHistori);
-       modelHistori.addColumn("No");
-       modelHistori.addColumn("Kode Transaksi");
-       modelHistori.addColumn("Nama Makanan");
-       modelHistori.addColumn("Jumlah");
-       modelHistori.addColumn("Harga Beli");
-       modelHistori.addColumn("Harga Jual");
-       modelHistori.addColumn("Tanggal");
-       loadHistori();
-       autoNumberMenu();
-       
     }
 
     /**
@@ -283,6 +160,8 @@ public class Admin extends javax.swing.JFrame {
         LabelInputMenu1 = new javax.swing.JLabel();
         FieldInputMenu2 = new javax.swing.JTextField();
         LabelInputMenu2 = new javax.swing.JLabel();
+        FieldInputMenu3 = new javax.swing.JTextField();
+        LabelInputMenu3 = new javax.swing.JLabel();
         FieldInputMenu4 = new javax.swing.JTextField();
         LabelInputMenu5 = new javax.swing.JLabel();
         FieldInputMenu5 = new javax.swing.JTextField();
@@ -292,19 +171,16 @@ public class Admin extends javax.swing.JFrame {
         ButtonSimpan = new javax.swing.JButton();
         ButtonEdit = new javax.swing.JButton();
         ButtonHapus = new javax.swing.JButton();
-        uploadBtnMenu = new javax.swing.JButton();
-        LbFoto_Makanan = new javax.swing.JLabel();
-        ButtonHapus1 = new javax.swing.JButton();
         TabelInputMenu = new javax.swing.JScrollPane();
-        tabelMenu = new javax.swing.JTable();
+        Tabel1 = new javax.swing.JTable();
         histori = new javax.swing.JPanel();
         historiNav = new javax.swing.JPanel();
         historiLabel = new javax.swing.JLabel();
         historiPanel = new javax.swing.JPanel();
         historiScrollPane = new javax.swing.JScrollPane();
-        tabelHistori = new javax.swing.JTable();
-        cariBtnHistori = new javax.swing.JButton();
+        jTable1 = new javax.swing.JTable();
         cariTx = new javax.swing.JTextField();
+        btncari = new javax.swing.JButton();
         InputUser = new javax.swing.JPanel();
         PanelInputUser1 = new javax.swing.JPanel();
         LabelInputUser1 = new javax.swing.JLabel();
@@ -656,7 +532,6 @@ public class Admin extends javax.swing.JFrame {
 
         PanelInputMenu2.setBackground(new java.awt.Color(254, 239, 208));
 
-        FieldInputMenu1.setEditable(false);
         FieldInputMenu1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FieldInputMenu1ActionPerformed(evt);
@@ -672,6 +547,14 @@ public class Admin extends javax.swing.JFrame {
         });
 
         LabelInputMenu2.setText("Nama Makanan");
+
+        FieldInputMenu3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FieldInputMenu3ActionPerformed(evt);
+            }
+        });
+
+        LabelInputMenu3.setText("Foto Makanan");
 
         FieldInputMenu4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -723,22 +606,6 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
-        uploadBtnMenu.setText("upload");
-        uploadBtnMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                uploadBtnMenuActionPerformed(evt);
-            }
-        });
-
-        LbFoto_Makanan.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        ButtonHapus1.setText("Batal");
-        ButtonHapus1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButtonHapus1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout PanelInputMenu2Layout = new javax.swing.GroupLayout(PanelInputMenu2);
         PanelInputMenu2.setLayout(PanelInputMenu2Layout);
         PanelInputMenu2Layout.setHorizontalGroup(
@@ -747,14 +614,12 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(FieldInputMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(PanelInputMenu2Layout.createSequentialGroup()
-                        .addComponent(LbFoto_Makanan, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(uploadBtnMenu))
+                    .addComponent(LabelInputMenu3)
+                    .addComponent(FieldInputMenu3, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputMenu2)
                     .addComponent(FieldInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputMenu1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(FieldInputMenu4, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputMenu5)
@@ -772,9 +637,7 @@ public class Admin extends javax.swing.JFrame {
                 .addComponent(ButtonEdit)
                 .addGap(14, 14, 14)
                 .addComponent(ButtonHapus)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButtonHapus1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(221, Short.MAX_VALUE))
         );
         PanelInputMenu2Layout.setVerticalGroup(
             PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -795,26 +658,22 @@ public class Admin extends javax.swing.JFrame {
                 .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(FieldInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(FieldInputMenu5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PanelInputMenu2Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(FieldInputMenu6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ButtonCari)
-                            .addComponent(uploadBtnMenu))
-                        .addGap(41, 41, 41)
-                        .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ButtonSimpan)
-                            .addComponent(ButtonEdit)
-                            .addComponent(ButtonHapus)
-                            .addComponent(ButtonHapus1)))
-                    .addGroup(PanelInputMenu2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(LbFoto_Makanan, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(LabelInputMenu3)
+                .addGap(4, 4, 4)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(FieldInputMenu3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FieldInputMenu6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ButtonCari))
+                .addGap(30, 30, 30)
+                .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButtonSimpan)
+                    .addComponent(ButtonEdit)
+                    .addComponent(ButtonHapus))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        tabelMenu.setModel(new javax.swing.table.DefaultTableModel(
+        Tabel1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -824,21 +683,8 @@ public class Admin extends javax.swing.JFrame {
             new String [] {
                 "Kode Transaksi", "Nama Makanan", "Harga Beli", "Harga Jual", "Foto Makanan"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tabelMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelMenuMouseClicked(evt);
-            }
-        });
-        TabelInputMenu.setViewportView(tabelMenu);
+        ));
+        TabelInputMenu.setViewportView(Tabel1);
 
         javax.swing.GroupLayout inputMenuLayout = new javax.swing.GroupLayout(inputMenu);
         inputMenu.setLayout(inputMenuLayout);
@@ -847,20 +693,20 @@ public class Admin extends javax.swing.JFrame {
             .addComponent(PanelInputMenu1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(inputMenuLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(PanelInputMenu2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(TabelInputMenu))
-                .addGap(45, 45, 45))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         inputMenuLayout.setVerticalGroup(
             inputMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inputMenuLayout.createSequentialGroup()
                 .addComponent(PanelInputMenu1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(PanelInputMenu2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(PanelInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(TabelInputMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         mainPanel.add(inputMenu, "card3");
@@ -893,28 +739,28 @@ public class Admin extends javax.swing.JFrame {
 
         historiPanel.setBackground(new java.awt.Color(254, 239, 210));
 
-        tabelHistori.setForeground(new java.awt.Color(40, 40, 40));
-        tabelHistori.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setForeground(new java.awt.Color(255, 255, 255));
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "No.", "Kode Transaksi", "Produk", "Jumlah", "Harga Jual", "Harga Beli", "Total", "Tanggal"
+                "No.", "Kode Transaksi", "Produk", "Jumlah", "Harga Jual", "Harga Beli", "Tanggal"
             }
         ));
-        historiScrollPane.setViewportView(tabelHistori);
-
-        cariBtnHistori.setText("Cari");
-        cariBtnHistori.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariBtnHistoriActionPerformed(evt);
-            }
-        });
+        historiScrollPane.setViewportView(jTable1);
 
         cariTx.setForeground(new java.awt.Color(80, 80, 80));
+
+        btncari.setText("Cari");
+        btncari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btncariActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout historiPanelLayout = new javax.swing.GroupLayout(historiPanel);
         historiPanel.setLayout(historiPanelLayout);
@@ -923,11 +769,11 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
+                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
                     .addGroup(historiPanelLayout.createSequentialGroup()
                         .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cariBtnHistori, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btncari)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(28, 28, 28))
         );
@@ -936,10 +782,10 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cariBtnHistori)
-                    .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btncari))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
         );
 
@@ -1140,7 +986,7 @@ public class Admin extends javax.swing.JFrame {
                     .addComponent(ButtonInputUserSimpan)
                     .addComponent(ButtonInputUserEdit)
                     .addComponent(ButtonInputUserHapus))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         TabelInputUser1.setModel(new javax.swing.table.DefaultTableModel(
@@ -1171,20 +1017,20 @@ public class Admin extends javax.swing.JFrame {
             .addComponent(PanelInputUser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(InputUserLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(TabelInputUser)
                     .addComponent(PanelInputUser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(25, 25, 25))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         InputUserLayout.setVerticalGroup(
             InputUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(InputUserLayout.createSequentialGroup()
                 .addComponent(PanelInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(PanelInputUser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(PanelInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(TabelInputUser, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addComponent(TabelInputUser, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         mainPanel.add(InputUser, "card5");
@@ -1333,7 +1179,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(ceteakBarccodePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPaneBarcode, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                .addComponent(jScrollPaneBarcode, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                 .addGap(24, 24, 24))
         );
 
@@ -1351,7 +1197,7 @@ public class Admin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sideBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1396,7 +1242,7 @@ public class Admin extends javax.swing.JFrame {
         mainPanel.repaint();
         mainPanel.revalidate();
         hitungKeuntungan();
-//        chartData();
+        chartData();
     }//GEN-LAST:event_homeBtnActionPerformed
 
     private void historiBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historiBtnActionPerformed
@@ -1430,6 +1276,10 @@ public class Admin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_FieldInputMenu2ActionPerformed
 
+    private void FieldInputMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FieldInputMenu3ActionPerformed
+
     private void FieldInputMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputMenu4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_FieldInputMenu4ActionPerformed
@@ -1448,137 +1298,18 @@ public class Admin extends javax.swing.JFrame {
 
     private void ButtonSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSimpanActionPerformed
         // TODO add your handling code here:
-        String id = FieldInputMenu1.getText();
-        String namaMakanan = FieldInputMenu2.getText();
-        String hargaBeli = FieldInputMenu4.getText();
-        String hargaJual = FieldInputMenu5.getText();
-        
-        try{
-            if (FieldInputMenu1.getText().length() > 0 && FieldInputMenu2.getText().length() > 0 && FieldInputMenu4.getText().length() > 0  && FieldInputMenu5.getText().length() > 0 && pathMenu != null) {
-                java.sql.Connection c = Koneksi.getKoneksi();
-                String sql = "INSERT INTO menu (kode_makanan, nama_makanan, harga_beli, harga_jual, foto_makanan) values(?,?,?,?,?)";
-                java.sql.PreparedStatement p = c.prepareStatement(sql);
-                p.setString(1, id);
-                p.setString(2, namaMakanan);
-                p.setString(3, hargaBeli);
-                p.setString(4, hargaJual);
-                 InputStream is = new FileInputStream(new File(pathMenu));
-                p.setBlob(5, is);
-
-                p.executeUpdate();
-                p.close();
-                JOptionPane.showMessageDialog(null, "Data Tersimpan");
-                loadDataMenu();
-                FieldInputMenu1.setText("");
-                FieldInputMenu2.setText("");
-                FieldInputMenu4.setText("");
-                FieldInputMenu5.setText("");
-                LbFoto_Makanan.setIcon(null);
-                autoNumberMenu();
-            }else{
-                JOptionPane.showMessageDialog(null, "Data Tidak Lengkap");
-            }
-        }catch(Exception e){
-            System.out.println(e);
-        }
     }//GEN-LAST:event_ButtonSimpanActionPerformed
 
     private void ButtonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonEditActionPerformed
         // TODO add your handling code here:
-        int i = tabelMenu.getSelectedRow();
-        if(i == -1 ){
-            JOptionPane.showMessageDialog(null, "Pilih Data Terlebih Dahulu");
-            return;
-        }
-        String id = (String)modelMenu.getValueAt(i,0);
-        String namaMakanan = FieldInputMenu2.getText();
-        String hargaBeli = FieldInputMenu4.getText();
-        String hargaJual = FieldInputMenu5.getText();
-        
-        if (FieldInputMenu1.getText().length() > 0 && FieldInputMenu2.getText().length() > 0 && FieldInputMenu4.getText().length() > 0  && FieldInputMenu5.getText().length() > 0) {
-        try{
-          java.sql.Connection c = Koneksi.getKoneksi();
-          String sql = "UPDATE menu SET nama_makanan = ?, harga_beli = ?, harga_jual = ?, foto_makanan = ? where kode_makanan = ?";
-          java.sql.PreparedStatement p = c.prepareStatement(sql);
-          p.setString(5, id);
-          p.setString(1, namaMakanan);
-          p.setString(2, hargaBeli);
-          p.setString(3, hargaJual);
-         Icon icon = LbFoto_Makanan.getIcon();
-            ImageIcon imageIcon = (ImageIcon) icon;
-            Image image = imageIcon.getImage();
-            
-            BufferedImage bufferedImage = new BufferedImage(imageIcon.getIconWidth(), imageIcon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-Graphics2D g2d = bufferedImage.createGraphics();
-g2d.drawImage(image, 0, 0, null);
-g2d.dispose();
-
-ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-ImageIO.write(bufferedImage, "jpg", outputStream);
-byte[] imageBytes = outputStream.toByteArray();
-          p.setBytes(4, imageBytes);
-          
-          p.executeUpdate();
-          p.close();
-          JOptionPane.showMessageDialog(null, "Data Berhasil Di Edit");
-          FieldInputMenu1.setText("");
-          FieldInputMenu2.setText("");
-          FieldInputMenu4.setText("");
-          FieldInputMenu5.setText("");
-          LbFoto_Makanan.setIcon(null);
-          loadDataMenu();
-            System.out.println(imageBytes);
-          autoNumberMenu();
-          ButtonSimpan.setEnabled(true);
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        } else {
-             JOptionPane.showMessageDialog(null, "Data Tidak Lengkap");
-        }
-        
     }//GEN-LAST:event_ButtonEditActionPerformed
 
     private void ButtonHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonHapusActionPerformed
         // TODO add your handling code here:
-        int i = tabelMenu.getSelectedRow();
-        if(i == -1 ){
-            JOptionPane.showMessageDialog(null, "Pilih Data Terlebih Dahulu");
-            return;
-        }
-        String id = (String)modelMenu.getValueAt(i,0);
-        int question = JOptionPane.showConfirmDialog(null, "Yakin ingin mneghapus data?", "konfirmasi", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if(question == JOptionPane.OK_OPTION){
-            try{
-                 java.sql.Connection c = Koneksi.getKoneksi();
-                 String sql = "DELETE from menu where kode_makanan = ?";
-                 java.sql.PreparedStatement p = c.prepareStatement(sql);
-                 p.setString(1, id);
-                 p.execute();
-                 p.close();
-                 JOptionPane.showMessageDialog(null, "Data Terhapus");
-                 loadDataMenu();
-                 autoNumberMenu();
-                 ButtonSimpan.setEnabled(true);
-            }catch(Exception e){
-                System.out.println(e);
-            }
-           FieldInputMenu1.setText("");
-          FieldInputMenu2.setText("");
-          FieldInputMenu4.setText("");
-          FieldInputMenu5.setText("");
-          LbFoto_Makanan.setIcon(null);
-          loadDataMenu();
-          autoNumberMenu();
-        }
-        if(question == JOptionPane.CANCEL_OPTION){
-            
-        }
     }//GEN-LAST:event_ButtonHapusActionPerformed
 
     private void FieldInputUser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser1ActionPerformed
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_FieldInputUser1ActionPerformed
 
     private void FieldInputUser2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FieldInputUser2ActionPerformed
@@ -1625,68 +1356,13 @@ byte[] imageBytes = outputStream.toByteArray();
         // TODO add your handling code here:
     }//GEN-LAST:event_cariBtnBarcodeActionPerformed
 
-    private void cariBtnHistoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBtnHistoriActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cariBtnHistoriActionPerformed
-
     private void roleTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roleTxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_roleTxActionPerformed
 
-    private void uploadBtnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnMenuActionPerformed
+    private void btncariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncariActionPerformed
         // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser();
-        chooser.showOpenDialog(null);
-        File f = chooser.getSelectedFile();
-        String path = f.getAbsolutePath();
-        try{
-            BufferedImage bi  = ImageIO.read(new File(path));
-            Image img = bi.getScaledInstance(168, 99, Image.SCALE_SMOOTH);
-            ImageIcon icon = new ImageIcon(img);
-            LbFoto_Makanan.setIcon(icon);
-            pathMenu = path;
-        }catch(Exception e){
-            System.out.println(e);
-        }
-    }//GEN-LAST:event_uploadBtnMenuActionPerformed
-
-    private void tabelMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelMenuMouseClicked
-        // TODO add your handling code here:
-        ButtonSimpan.setEnabled(false);
-        int i = tabelMenu.getSelectedRow();
-        if(i == -1 ){
-            return;
-        }
-        String id = (String) modelMenu.getValueAt(i,0);
-        String nama_makanan = (String) modelMenu.getValueAt(i,1);
-        String harga_beli = (String) modelMenu.getValueAt(i,2);
-        String harga_jual = (String) modelMenu.getValueAt(i,3);
-        ImageIcon icon = (ImageIcon) modelMenu.getValueAt(i, 4);
-        Image image = icon.getImage();
-        int width = 200;
-             int height = 120;
-             
-             Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        Icon newIcon = new ImageIcon(resizedImage);
-//        System.out.println(foto);
-        
-        FieldInputMenu1.setText(id);
-        FieldInputMenu2.setText(nama_makanan);
-        FieldInputMenu4.setText(harga_beli);
-        FieldInputMenu5.setText(harga_jual);
-        LbFoto_Makanan.setIcon(newIcon);
-    }//GEN-LAST:event_tabelMenuMouseClicked
-
-    private void ButtonHapus1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonHapus1ActionPerformed
-        // TODO add your handling code here:
-         FieldInputMenu1.setText("");
-          FieldInputMenu2.setText("");
-          FieldInputMenu4.setText("");
-          FieldInputMenu5.setText("");
-          LbFoto_Makanan.setIcon(null);
-          autoNumberMenu();
-          ButtonSimpan.setEnabled(true);
-    }//GEN-LAST:event_ButtonHapus1ActionPerformed
+    }//GEN-LAST:event_btncariActionPerformed
 
 
     /**
@@ -1722,7 +1398,6 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JButton ButtonCari;
     private javax.swing.JButton ButtonEdit;
     private javax.swing.JButton ButtonHapus;
-    private javax.swing.JButton ButtonHapus1;
     private javax.swing.JButton ButtonInputUserCari;
     private javax.swing.JButton ButtonInputUserEdit;
     private javax.swing.JButton ButtonInputUserHapus;
@@ -1731,6 +1406,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private java.awt.Button EditBtnBarcode;
     private javax.swing.JTextField FieldInputMenu1;
     private javax.swing.JTextField FieldInputMenu2;
+    private javax.swing.JTextField FieldInputMenu3;
     private javax.swing.JTextField FieldInputMenu4;
     private javax.swing.JTextField FieldInputMenu5;
     private javax.swing.JTextField FieldInputMenu6;
@@ -1743,6 +1419,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JPanel InputUser;
     private javax.swing.JLabel LabelInputMenu1;
     private javax.swing.JLabel LabelInputMenu2;
+    private javax.swing.JLabel LabelInputMenu3;
     private javax.swing.JLabel LabelInputMenu5;
     private javax.swing.JLabel LabelInputMenu6;
     private javax.swing.JLabel LabelInputUser1;
@@ -1751,19 +1428,19 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JLabel LabelInputUser4;
     private javax.swing.JLabel LabelInputUser5;
     private javax.swing.JLabel LabelInputUser6;
-    private javax.swing.JLabel LbFoto_Makanan;
     private javax.swing.JPanel PanelInputMenu1;
     private javax.swing.JPanel PanelInputMenu2;
     private javax.swing.JPanel PanelInputUser1;
     private javax.swing.JPanel PanelInputUser2;
+    private javax.swing.JTable Tabel1;
     private javax.swing.JScrollPane TabelInputMenu;
     private javax.swing.JScrollPane TabelInputUser;
     private javax.swing.JTable TabelInputUser1;
     private javax.swing.JPanel barcodeNav;
     private javax.swing.JLabel barcodeNavLabel;
     private javax.swing.JTable barcodeTabel;
+    private javax.swing.JButton btncari;
     private java.awt.Button cariBtnBarcode;
-    private javax.swing.JButton cariBtnHistori;
     private javax.swing.JTextField cariTx;
     private javax.swing.JPanel cetakBarcode;
     private javax.swing.JPanel ceteakBarccodePanel;
@@ -1794,6 +1471,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneBarcode;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JButton karyawanBtn;
     private javax.swing.JLabel kodeBarcode;
@@ -1810,8 +1488,9 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JTextField searchInputBarcode;
     private javax.swing.JPanel sideBar;
     private javax.swing.JPanel statistikPanel;
-    private javax.swing.JTable tabelHistori;
-    private javax.swing.JTable tabelMenu;
-    private javax.swing.JButton uploadBtnMenu;
     // End of variables declaration//GEN-END:variables
+
+    private void initcomponent() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

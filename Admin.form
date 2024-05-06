@@ -604,11 +604,11 @@
                       <Component id="PanelInputMenu1" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="PanelInputMenu2" max="32767" attributes="0"/>
                               <Component id="TabelInputMenu" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                          <EmptySpace pref="24" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -616,11 +616,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="PanelInputMenu1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                          <Component id="PanelInputMenu2" max="32767" attributes="0"/>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="PanelInputMenu2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="TabelInputMenu" min="-2" pref="383" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -681,16 +681,13 @@
                               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="FieldInputMenu1" alignment="0" min="-2" pref="168" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Component id="LbFoto_Makanan" min="-2" pref="168" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="uploadBtnMenu" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="LabelInputMenu3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="FieldInputMenu3" min="-2" pref="168" max="-2" attributes="0"/>
                                   <Component id="LabelInputMenu2" min="-2" max="-2" attributes="0"/>
                                   <Component id="FieldInputMenu2" min="-2" pref="168" max="-2" attributes="0"/>
                                   <Component id="LabelInputMenu1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="177" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="FieldInputMenu4" min="-2" pref="168" max="-2" attributes="0"/>
                                   <Component id="LabelInputMenu5" min="-2" max="-2" attributes="0"/>
@@ -711,9 +708,7 @@
                               <Component id="ButtonEdit" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                               <Component id="ButtonHapus" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ButtonHapus1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="221" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -740,37 +735,27 @@
                                   <Component id="FieldInputMenu2" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="FieldInputMenu5" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="FieldInputMenu6" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="ButtonCari" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="uploadBtnMenu" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="ButtonSimpan" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="ButtonEdit" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="ButtonHapus" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="ButtonHapus1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="LbFoto_Makanan" min="-2" pref="99" max="-2" attributes="0"/>
-                                  </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="LabelInputMenu3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="FieldInputMenu3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="FieldInputMenu6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ButtonCari" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="ButtonSimpan" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ButtonEdit" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ButtonHapus" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="18" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JTextField" name="FieldInputMenu1">
-                      <Properties>
-                        <Property name="editable" type="boolean" value="false"/>
-                      </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FieldInputMenu1ActionPerformed"/>
                       </Events>
@@ -788,6 +773,16 @@
                     <Component class="javax.swing.JLabel" name="LabelInputMenu2">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Nama Makanan"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="FieldInputMenu3">
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FieldInputMenu3ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="LabelInputMenu3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Foto Makanan"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="FieldInputMenu4">
@@ -847,31 +842,6 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonHapusActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="uploadBtnMenu">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="upload"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="uploadBtnMenuActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="LbFoto_Makanan">
-                      <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                            <LineBorder roundedCorners="true"/>
-                          </Border>
-                        </Property>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="ButtonHapus1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Batal"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonHapus1ActionPerformed"/>
-                      </Events>
-                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JScrollPane" name="TabelInputMenu">
@@ -881,15 +851,15 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="tabelMenu">
+                    <Component class="javax.swing.JTable" name="Tabel1">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="5" rowCount="4">
-                            <Column editable="false" title="Kode Transaksi" type="java.lang.Object"/>
-                            <Column editable="false" title="Nama Makanan" type="java.lang.Object"/>
-                            <Column editable="false" title="Harga Beli" type="java.lang.Object"/>
-                            <Column editable="false" title="Harga Jual" type="java.lang.Object"/>
-                            <Column editable="false" title="Foto Makanan" type="java.lang.Object"/>
+                            <Column editable="true" title="Kode Transaksi" type="java.lang.Object"/>
+                            <Column editable="true" title="Nama Makanan" type="java.lang.Object"/>
+                            <Column editable="true" title="Harga Beli" type="java.lang.Object"/>
+                            <Column editable="true" title="Harga Jual" type="java.lang.Object"/>
+                            <Column editable="true" title="Foto Makanan" type="java.lang.Object"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -925,9 +895,6 @@
                           <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                         </Property>
                       </Properties>
-                      <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tabelMenuMouseClicked"/>
-                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -1025,11 +992,11 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="historiScrollPane" pref="626" max="32767" attributes="0"/>
+                                  <Component id="historiScrollPane" pref="645" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Component id="cariTx" min="-2" pref="140" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="cariBtnHistori" min="-2" pref="59" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="btncari" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1042,11 +1009,11 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="cariBtnHistori" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="cariTx" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btncari" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="historiScrollPane" pref="325" max="32767" attributes="0"/>
+                              <Component id="historiScrollPane" pref="328" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1060,41 +1027,82 @@
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                       <SubComponents>
-                        <Component class="javax.swing.JTable" name="tabelHistori">
+                        <Component class="javax.swing.JTable" name="jTable1">
                           <Properties>
                             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="28" green="28" red="28" type="rgb"/>
+                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
                             </Property>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="8" rowCount="4">
+                              <Table columnCount="7" rowCount="4">
                                 <Column editable="true" title="No." type="java.lang.Object"/>
                                 <Column editable="true" title="Kode Transaksi" type="java.lang.Object"/>
                                 <Column editable="true" title="Produk" type="java.lang.Object"/>
                                 <Column editable="true" title="Jumlah" type="java.lang.Object"/>
                                 <Column editable="true" title="Harga Jual" type="java.lang.Object"/>
                                 <Column editable="true" title="Harga Beli" type="java.lang.Object"/>
-                                <Column editable="true" title="Total" type="java.lang.Object"/>
                                 <Column editable="true" title="Tanggal" type="java.lang.Object"/>
                               </Table>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0">
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                              </TableColumnModel>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
                           </Properties>
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Component class="javax.swing.JButton" name="cariBtnHistori">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Cari"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cariBtnHistoriActionPerformed"/>
-                      </Events>
-                    </Component>
                     <Component class="javax.swing.JTextField" name="cariTx">
                       <Properties>
                         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="50" green="50" red="50" type="rgb"/>
                         </Property>
                       </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btncari">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Cari"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btncariActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -1113,11 +1121,11 @@
                       <Component id="PanelInputUser1" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="TabelInputUser" max="32767" attributes="0"/>
                               <Component id="PanelInputUser2" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                          <EmptySpace pref="25" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1125,11 +1133,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="PanelInputUser1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                          <Component id="PanelInputUser2" max="32767" attributes="0"/>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                          <Component id="TabelInputUser" pref="183" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="PanelInputUser2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="TabelInputUser" min="-2" pref="217" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1271,7 +1279,7 @@
                                   <Component id="ButtonInputUserEdit" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="ButtonInputUserHapus" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="15" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1472,7 +1480,7 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="ceteakBarccodePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jScrollPaneBarcode" pref="198" max="32767" attributes="0"/>
+                          <Component id="jScrollPaneBarcode" pref="202" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       </Group>
                   </Group>

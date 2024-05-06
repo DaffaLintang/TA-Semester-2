@@ -4,12 +4,6 @@
  */
 package baksopuas;
 
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.common.HybridBinarizer;
 import com.mysql.jdbc.Blob;
 import com.mysql.jdbc.PreparedStatement;
 import java.awt.BorderLayout;
@@ -21,19 +15,14 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -45,7 +34,6 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 /**
@@ -57,6 +45,7 @@ public class Kasir extends javax.swing.JFrame {
     /**
      * Creates new form Kasir
      */
+    private DefaultTableModel model;
     public void loadMenu(){
         try{
         Connection c = Koneksi.getKoneksi();
@@ -80,9 +69,7 @@ public class Kasir extends javax.swing.JFrame {
                Blob imageBlob = (Blob) r.getBlob("foto_makanan");
                byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
                Image image = Toolkit.getDefaultToolkit().createImage(imageBytes);
-               Image resizedImage = image.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
-
-               ImageIcon imageIcon = new ImageIcon(resizedImage);
+               ImageIcon imageIcon = new ImageIcon(image);
                JLabel labelGambar = new JLabel(imageIcon);
                itemPanel.add(labelGambar, BorderLayout.NORTH);
 
@@ -210,14 +197,13 @@ public void totalBiaya() {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        diskonTx = new javax.swing.JTextField();
+        jTextField1 = new javax.swing.JTextField();
         total = new javax.swing.JTextField();
         bayarTx = new javax.swing.JTextField();
         kembalian = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -351,12 +337,6 @@ public void totalBiaya() {
         jLabel8.setForeground(new java.awt.Color(80, 80, 80));
         jLabel8.setText("Kembalian");
 
-        diskonTx.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                diskonTxActionPerformed(evt);
-            }
-        });
-
         total.setEditable(false);
         total.setForeground(new java.awt.Color(153, 153, 153));
 
@@ -387,13 +367,6 @@ public void totalBiaya() {
             }
         });
 
-        jButton5.setText("scan");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout roundedJpanel2Layout = new javax.swing.GroupLayout(roundedJpanel2);
         roundedJpanel2.setLayout(roundedJpanel2Layout);
         roundedJpanel2Layout.setHorizontalGroup(
@@ -404,35 +377,35 @@ public void totalBiaya() {
             .addGroup(roundedJpanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedJpanel2Layout.createSequentialGroup()
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedJpanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel5)
-                            .addGap(18, 18, 18)
-                            .addComponent(diskonTx, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedJpanel2Layout.createSequentialGroup()
-                            .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel8))
-                            .addGap(34, 34, 34)
-                            .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(kembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(bayarTx, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(15, 15, 15)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                        .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                                .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8))
+                                .addGap(34, 34, 34)
+                                .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(kembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(bayarTx, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 1, Short.MAX_VALUE)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         roundedJpanel2Layout.setVerticalGroup(
             roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -448,8 +421,7 @@ public void totalBiaya() {
                 .addGap(18, 18, 18)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(diskonTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -521,7 +493,7 @@ public void totalBiaya() {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
          if(bayarTx.getText().length() > 0){
-                  Date today = new Date();
+              Date today = new Date();
             SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy/MM/dd");
             String formattedDate1 = formatter1.format(today);
         String bayar = bayarTx.getText().toString();
@@ -550,7 +522,6 @@ public void totalBiaya() {
              }
             jButton3.setEnabled(true);
         }
-             
          }else {
               JOptionPane.showMessageDialog(null, "Masukkan jumlah yang dibayar");
          }
@@ -564,7 +535,6 @@ public void totalBiaya() {
               int row = jTable1.getSelectedRow();
               model.removeRow(row);
               totalBiaya(); 
-              dataSebelumnya.clear();
          }else {
               JOptionPane.showMessageDialog(null, "Pilih menu yanng akan dihapus");
          }
@@ -583,59 +553,52 @@ public void totalBiaya() {
                       ResultSet r = s.executeQuery(sql3);
                       while(r.next()){
                          kodeTransaksi = r.getInt("kode_transaksi");
-                          
+                          System.out.println(kodeTransaksi);
                       }
                  }catch(Exception e){
                      System.out.println(e);
                  }
-                 int totalRows = jTable1.getRowCount(); // Jumlah baris data
-                 int headerHeight = 100; // Tinggi header
-                 int footerHeight = 50; // Tinggi footer
-                 int rowHeight = 20; // Tinggi setiap baris data
-                 int tableBorder = 20; // Jarak antara tabel dan tepi halaman
-                 int contentHeight = totalRows * rowHeight; // Tinggi konten data
-                 int totalHeight = headerHeight + footerHeight + contentHeight + tableBorder; // Total tinggi halaman
             PDDocument document  = new PDDocument();
-            PDPage page = new PDPage(new PDRectangle(250, totalHeight+100));
+            PDPage page = new PDPage();
             Date today = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String formattedDate = formatter.format(today);
             document.addPage(page);
             int startX = 20;
-            int startY = totalHeight-100;
-            int startY1 = startY+90;
-            int tableWidth = 250;
+            int startY = 600;
+            int rowHeight = 20;
+            int tableWidth = 500;
             int colWidth = tableWidth / 3;
-                 System.out.println(totalHeight);
+         
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             PDType0Font font = PDType0Font.load(document, new File("C:\\Users\\Daffa Lintang\\Downloads\\font\\Helvetica.ttf"));
             
             contentStream.setFont(font, 16);
             contentStream.beginText();
-            contentStream.newLineAtOffset(20, startY+180);
-            contentStream.showText("              Bakso Puas");
+            contentStream.newLineAtOffset(20, 700);
+            contentStream.showText("                                Bakso Puas");
             contentStream.endText();
             
              contentStream.setNonStrokingColor(0,0,0);
              contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(20, startY+160);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.newLineAtOffset(20, 680);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(20, startY+140);
+             contentStream.newLineAtOffset(20, 660);
              contentStream.showText("Kode Transaksi : "+kodeTransaksi);
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(20, startY+120);
+             contentStream.newLineAtOffset(20, 640);
              contentStream.showText("Tanggal : "+formattedDate);
              contentStream.newLine();
              contentStream.endText();
@@ -643,15 +606,15 @@ public void totalBiaya() {
              contentStream.setNonStrokingColor(0,0,0);
              contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(20, startY+100);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.newLineAtOffset(20, 620);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
             
             contentStream.setNonStrokingColor(0,0,0);
-            contentStream.setFont(font, 10);
+            contentStream.setFont(font, 12);
             contentStream.beginText();
-            contentStream.newLineAtOffset(startX, startY1);
+            contentStream.newLineAtOffset(startX, startY);
             contentStream.showText("Nama");
             contentStream.newLineAtOffset(colWidth, 0);
             contentStream.showText("Jumlah");
@@ -660,10 +623,10 @@ public void totalBiaya() {
             contentStream.newLineAtOffset(colWidth, 0);  
             contentStream.endText();
             contentStream.setNonStrokingColor(0,0,0);
-            contentStream.setFont(font, 8);
+            contentStream.setFont(font, 12);
             for(int i = 0; i < jTable1.getRowCount(); i++){
                 contentStream.beginText();
-                contentStream.newLineAtOffset(startX, startY1 -(i + 1)* rowHeight);
+                contentStream.newLineAtOffset(startX, startY -(i + 1)* rowHeight);
                 contentStream.showText(jTable1.getValueAt(i, 0).toString());
                 contentStream.newLineAtOffset(colWidth, 0);
                 contentStream.showText(jTable1.getValueAt(i, 1).toString());
@@ -704,31 +667,31 @@ public void totalBiaya() {
              contentStream.setNonStrokingColor(0,0,0);
              contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() +1)  * rowHeight);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() +1)  * rowHeight);
+             contentStream.showText("---------------------------------------------------------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 2)  * rowHeight);
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 2)  * rowHeight);
              contentStream.showText("Total : " + total.getText());
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 3)  * rowHeight);
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 3)  * rowHeight);
              contentStream.showText("Bayar : Rp " + bayarTx.getText());
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 12);
              contentStream.beginText();
-             contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 4)  * rowHeight);
+             contentStream.newLineAtOffset(startX, startY - (jTable1.getRowCount() + 4)  * rowHeight);
              contentStream.showText("Kembalian :" + kembalian.getText());
              contentStream.newLine();
              contentStream.endText();
@@ -750,7 +713,6 @@ public void totalBiaya() {
         }
                while(model.getRowCount() > 0){
              model.removeRow(0);
-             dataSebelumnya.clear();
         }
         } else {
             JOptionPane.showMessageDialog(null, "Bayar Terlebih Dahulu");
@@ -766,39 +728,6 @@ public void totalBiaya() {
         x.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void diskonTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diskonTxActionPerformed
-        // TODO add your handling code here:
-       double diskon = Double.parseDouble(diskonTx.getText());
-       
-       String bayar = total.getText();
-       String cleanedInput = bayar.replaceAll("\\,[\\d]*$", "");
-       cleanedInput = cleanedInput.replaceAll("^Rp", "");
-        System.out.println(cleanedInput);
-       double cleanedInput1 = Double.parseDouble(cleanedInput);
-       double totalBayar = cleanedInput1;
-        System.out.println(bayar);
-        System.out.println(totalBayar);
-       double totalDiskon = totalBayar * diskon;
-       double diskonbayar = totalBayar - totalDiskon;
-       int diskonBayar1 = (int) diskonbayar;
-       total.setText("Rp "+Integer.toString(diskonBayar1));
-    }//GEN-LAST:event_diskonTxActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        try{
-           InputStream barInputStream = new FileInputStream("C:\\Users\\Daffa Lintang\\Downloads\\0.02.png");
-           BufferedImage bufferedImage = ImageIO.read(barInputStream);
-           LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-           BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-           MultiFormatReader reader = new MultiFormatReader();
-           Result result = reader.decode(bitmap);
-           diskonTx.setText(result.getText());
-       }catch(Exception e){
-           System.out.println(e);
-       }
-    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -837,12 +766,10 @@ public void totalBiaya() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField bayarTx;
-    private javax.swing.JTextField diskonTx;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -854,6 +781,7 @@ public void totalBiaya() {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField kembalian;
     private javax.swing.JPanel menuContainer;
     private test.PanelRound panelRound3;
