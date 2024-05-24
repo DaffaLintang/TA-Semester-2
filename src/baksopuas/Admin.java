@@ -4,18 +4,18 @@
  */
 package baksopuas;
 
+import static baksopuas.Kasir.usernameKasir;
 import chart.ModelChart;
-import com.mysql.jdbc.Blob;
+import com.barcodelib.barcode.Linear;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
 import java.awt.Graphics2D;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
@@ -32,7 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.security.Timestamp;
+import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 /**
@@ -43,6 +43,8 @@ public class Admin extends javax.swing.JFrame {
     
     private DefaultTableModel modelMenu;
     private DefaultTableModel modelHistori;
+    private DefaultTableModel barcodeModel;
+    private DefaultTableModel userModel;
     /**
      * Creates new form Admin
      */
@@ -62,11 +64,38 @@ public class Admin extends javax.swing.JFrame {
                 String kodeMakanan = r.getString("kode_makanan");
                 int kdMakanan = Integer.parseInt(kodeMakanan);
                 FieldInputMenu1.setText(String.valueOf(kdMakanan +1));
+            }else{
+                FieldInputMenu1.setText(String.valueOf(1));
             }
         }catch(Exception e){
             System.out.println(e);
         }
     }
+    
+    public void autoNumberUser(){
+        try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT kode_user FROM user order by kode_user DESC";
+            ResultSet r = s.executeQuery(sql);
+            
+            if(r.next()){
+                String kodeUser = r.getString("kode_user");
+                int kdUser = Integer.parseInt(kodeUser);
+                FieldInputUser1.setText(String.valueOf(kdUser +1));
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    
+    
+    
+    public void clearBarcode(){
+        inputDiskonBarcode.setText("");
+    }
+    
     
     public void loadDataMenu(){
         modelMenu.getDataVector().removeAllElements();
@@ -90,6 +119,35 @@ public class Admin extends javax.swing.JFrame {
             o[4] = imageIcon;
 
             modelMenu.addRow(o);    
+            }
+            r.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    
+     public void loadDataUser(){
+        userModel.getDataVector().removeAllElements();
+        userModel.fireTableDataChanged();
+        
+        try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT * FROM user order by kode_user DESC";
+            ResultSet r = s.executeQuery(sql);
+            
+            while(r.next()){
+                Object[] o = new Object[6];
+            o[0] = r.getString("kode_user");
+            o[1] = r.getString("username");
+            o[2] = r.getString("password");
+            o[3] = r.getString("role");
+            o[4] = r.getString("Alamt");
+            o[5] = r.getString("No_Hp");
+            
+            userModel.addRow(o);    
             }
             r.close();
             s.close();
@@ -165,7 +223,6 @@ public class Admin extends javax.swing.JFrame {
         }
         r.close();
         s.close();
-            
         for(int i = list.size()-1; i>=0 ; i--){
             ModelData d = list.get(i);
             chart.addData(new ModelChart(d.getMonth(), new double[]{d.getPengeluaran(), d.getPendapatan(), d.getProfit()}));
@@ -204,6 +261,95 @@ public class Admin extends javax.swing.JFrame {
         }    
     }
     
+     public void cari(){
+        String key = searchInputBarcode.getText();
+        DefaultTableModel tabel = new DefaultTableModel();
+         tabel.addColumn("Kode Barcode");
+        tabel.addColumn("Diskon");
+        tabel.addColumn("Barcode");
+
+          try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT * FROM barcode where kode_barcode like '%"+key+"%' or diskon like '%"+key+"%'";
+            ResultSet r = s.executeQuery(sql);
+           
+            while(r.next()){
+                byte[] imageData = r.getBytes("barcode");
+                ImageIcon imageIcon = new ImageIcon(imageData);
+              
+                tabel.addRow(new Object[]{
+               r.getString(1),
+               r.getString(2),
+               imageIcon
+       
+            });
+            barcodeTabel.setModel(tabel);
+            }
+            r.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+       loadDataBarcode();
+       setTableRenderBarcode();
+    }
+     
+     public void loadDataBarcode() {
+        barcodeModel.getDataVector().removeAllElements();
+        barcodeModel.fireTableDataChanged();
+        
+        try {
+            Connection c = (Connection) Koneksi.getKoneksi();
+            Statement s = (Statement) c.createStatement();
+            
+            String sql = "SELECT * FROM barcode";
+            ResultSet r = s.executeQuery(sql);
+            
+            while (r.next()) {
+                Object[] o = new Object[3];
+                o [0] = r.getString("kode_barcode");
+                o [1] = r.getString("diskon");
+                byte[] imageData = r.getBytes("barcode");
+            ImageIcon imageIcon = new ImageIcon(imageData);
+                o [2] = imageIcon;
+                
+                barcodeModel.addRow(o);
+            }
+            r.close();
+            s.close();
+        } catch (Exception e) {
+            System.out.println("Terjadi Kesalahan");
+    }
+    }
+    
+     public void setTableRenderBarcode(){
+        class CustomRenderer extends DefaultTableCellRenderer {
+        
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if(value instanceof ImageIcon){
+             ImageIcon icon =(ImageIcon) value;
+             Image originImage =icon.getImage();
+             
+             int width = 200;
+             int height = 120;
+             
+             Image resizedImage = originImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+             ImageIcon resizedIcon = new ImageIcon(resizedImage);
+             
+             JLabel label = new JLabel(resizedIcon);
+             label.setHorizontalAlignment(JLabel.CENTER);
+             
+             return label;
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+}
+}
+       barcodeTabel.getColumnModel().getColumn(2).setCellRenderer(new CustomRenderer());
+} 
+     
     public Admin() {
         initComponents();
         chart.setTitle("Grafik Penjualan");
@@ -238,6 +384,26 @@ public class Admin extends javax.swing.JFrame {
        loadHistori();
        autoNumberMenu();
        
+       
+       barcodeModel = new DefaultTableModel();
+       barcodeTabel.setRowHeight(100);
+       barcodeTabel.setModel(barcodeModel);
+       barcodeModel.addColumn("Kode_Barcode");
+       barcodeModel.addColumn("Diskon");
+       barcodeModel.addColumn("Barcode");
+       loadDataBarcode();
+       setTableRenderBarcode();
+       
+       userModel = new DefaultTableModel();
+       TabelInputUser1.setModel(userModel);
+       userModel.addColumn("Kode_User");
+       userModel.addColumn("Username");
+       userModel.addColumn("Password");
+       userModel.addColumn("Role");
+       userModel.addColumn("Alamat");
+       userModel.addColumn("No_Hp");
+       loadDataUser();
+       autoNumberUser();
     }
 
     /**
@@ -251,6 +417,7 @@ public class Admin extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
         sideBar = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -259,6 +426,8 @@ public class Admin extends javax.swing.JFrame {
         homeBtn = new javax.swing.JButton();
         historiBtn = new javax.swing.JButton();
         karyawanBtn = new javax.swing.JButton();
+        cetakBarcodeBtn = new javax.swing.JButton();
+        KasirBtn = new javax.swing.JButton();
         mainPanel = new javax.swing.JPanel();
         dashboard = new javax.swing.JPanel();
         dashboardNav = new javax.swing.JPanel();
@@ -324,20 +493,18 @@ public class Admin extends javax.swing.JFrame {
         ButtonInputUserSimpan = new javax.swing.JButton();
         ButtonInputUserEdit = new javax.swing.JButton();
         ButtonInputUserHapus = new javax.swing.JButton();
-        roleTx = new javax.swing.JTextField();
         inputRole = new javax.swing.JLabel();
+        cmbBoxUser = new javax.swing.JComboBox<>();
+        ButtonInputUserBatal = new javax.swing.JButton();
         TabelInputUser = new javax.swing.JScrollPane();
         TabelInputUser1 = new javax.swing.JTable();
         cetakBarcode = new javax.swing.JPanel();
         ceteakBarccodePanel = new javax.swing.JPanel();
         inputDiskonBarcode = new javax.swing.JTextField();
-        inputKodeBarcode = new javax.swing.JTextField();
         searchInputBarcode = new javax.swing.JTextField();
         saveBtnBarcode = new java.awt.Button();
-        EditBtnBarcode = new java.awt.Button();
         hapusBtnBarcode = new java.awt.Button();
         cariBtnBarcode = new java.awt.Button();
-        kodeBarcode = new javax.swing.JLabel();
         diskonBarcode = new javax.swing.JLabel();
         jScrollPaneBarcode = new javax.swing.JScrollPane();
         barcodeTabel = new javax.swing.JTable();
@@ -356,6 +523,8 @@ public class Admin extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(jTable2);
+
+        jToolBar1.setRollover(true);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -378,7 +547,7 @@ public class Admin extends javax.swing.JFrame {
                 inputMenuBtnActionPerformed(evt);
             }
         });
-        sideBar.add(inputMenuBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 40));
+        sideBar.add(inputMenuBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 120, 40));
 
         logOutBtn.setBackground(new java.awt.Color(124, 183, 89));
         logOutBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -389,7 +558,7 @@ public class Admin extends javax.swing.JFrame {
                 logOutBtnActionPerformed(evt);
             }
         });
-        sideBar.add(logOutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 120, 40));
+        sideBar.add(logOutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, 120, 40));
 
         homeBtn.setBackground(new java.awt.Color(124, 183, 89));
         homeBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -400,7 +569,7 @@ public class Admin extends javax.swing.JFrame {
                 homeBtnActionPerformed(evt);
             }
         });
-        sideBar.add(homeBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 120, 40));
+        sideBar.add(homeBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 120, 40));
 
         historiBtn.setBackground(new java.awt.Color(124, 183, 89));
         historiBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -411,7 +580,7 @@ public class Admin extends javax.swing.JFrame {
                 historiBtnActionPerformed(evt);
             }
         });
-        sideBar.add(historiBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 120, 40));
+        sideBar.add(historiBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 120, 40));
 
         karyawanBtn.setBackground(new java.awt.Color(124, 183, 89));
         karyawanBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -422,7 +591,34 @@ public class Admin extends javax.swing.JFrame {
                 karyawanBtnActionPerformed(evt);
             }
         });
-        sideBar.add(karyawanBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 120, 40));
+        sideBar.add(karyawanBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 120, 40));
+
+        cetakBarcodeBtn.setBackground(new java.awt.Color(124, 183, 89));
+        cetakBarcodeBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cetakBarcodeBtn.setText("Cetak Barcode");
+        cetakBarcodeBtn.setBorder(null);
+        cetakBarcodeBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cetakBarcodeBtnActionPerformed(evt);
+            }
+        });
+        sideBar.add(cetakBarcodeBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 120, 40));
+
+        KasirBtn.setBackground(new java.awt.Color(124, 183, 89));
+        KasirBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        KasirBtn.setText("Kasir");
+        KasirBtn.setBorder(null);
+        KasirBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KasirBtnActionPerformed(evt);
+            }
+        });
+        sideBar.add(KasirBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 120, 40));
+
+        namaAdmin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        namaAdmin.setForeground(new java.awt.Color(30, 30, 30));
+        namaAdmin.setText("Nama");
+        sideBar.add(namaAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 50, 50, -1));
 
         mainPanel.setBackground(new java.awt.Color(255, 255, 255));
         mainPanel.setLayout(new java.awt.CardLayout());
@@ -473,7 +669,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(profitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(profitTx, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                    .addComponent(profitTx, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
                 .addGap(18, 18, 18))
         );
         profitLayout.setVerticalGroup(
@@ -506,10 +702,10 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(pengeluaranLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pengeluaranTx, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .addComponent(pengeluaranTx, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                     .addGroup(pengeluaranLayout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 35, Short.MAX_VALUE)))
+                        .addGap(0, 48, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pengeluaranLayout.setVerticalGroup(
@@ -544,7 +740,7 @@ public class Admin extends javax.swing.JFrame {
                     .addComponent(pemasukanTx, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pemasukanLayout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 32, Short.MAX_VALUE)))
+                        .addGap(0, 43, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pemasukanLayout.setVerticalGroup(
@@ -592,7 +788,7 @@ public class Admin extends javax.swing.JFrame {
             grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(grafikPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
                 .addContainerGap())
         );
         grafikPanelLayout.setVerticalGroup(
@@ -694,6 +890,11 @@ public class Admin extends javax.swing.JFrame {
                 FieldInputMenu6ActionPerformed(evt);
             }
         });
+        FieldInputMenu6.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                FieldInputMenu6KeyTyped(evt);
+            }
+        });
 
         ButtonCari.setText("Cari");
         ButtonCari.addActionListener(new java.awt.event.ActionListener() {
@@ -754,7 +955,7 @@ public class Admin extends javax.swing.JFrame {
                     .addComponent(LabelInputMenu2)
                     .addComponent(FieldInputMenu2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputMenu1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 212, Short.MAX_VALUE)
                 .addGroup(PanelInputMenu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(FieldInputMenu4, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabelInputMenu5)
@@ -915,6 +1116,11 @@ public class Admin extends javax.swing.JFrame {
         });
 
         cariTx.setForeground(new java.awt.Color(80, 80, 80));
+        cariTx.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cariTxKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout historiPanelLayout = new javax.swing.GroupLayout(historiPanel);
         historiPanel.setLayout(historiPanelLayout);
@@ -923,7 +1129,7 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
+                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)
                     .addGroup(historiPanelLayout.createSequentialGroup()
                         .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -989,6 +1195,7 @@ public class Admin extends javax.swing.JFrame {
 
         PanelInputUser2.setBackground(new java.awt.Color(254, 239, 208));
 
+        FieldInputUser1.setEditable(false);
         FieldInputUser1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FieldInputUser1ActionPerformed(evt);
@@ -1055,17 +1262,30 @@ public class Admin extends javax.swing.JFrame {
         });
 
         ButtonInputUserEdit.setText("Edit");
+        ButtonInputUserEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonInputUserEditActionPerformed(evt);
+            }
+        });
 
         ButtonInputUserHapus.setText("Hapus");
-
-        roleTx.addActionListener(new java.awt.event.ActionListener() {
+        ButtonInputUserHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                roleTxActionPerformed(evt);
+                ButtonInputUserHapusActionPerformed(evt);
             }
         });
 
         inputRole.setForeground(new java.awt.Color(80, 80, 80));
         inputRole.setText("Role");
+
+        cmbBoxUser.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "karyawan", "admin" }));
+
+        ButtonInputUserBatal.setText("Batal");
+        ButtonInputUserBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonInputUserBatalActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PanelInputUser2Layout = new javax.swing.GroupLayout(PanelInputUser2);
         PanelInputUser2.setLayout(PanelInputUser2Layout);
@@ -1073,36 +1293,38 @@ public class Admin extends javax.swing.JFrame {
             PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelInputUser2Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(PanelInputUser2Layout.createSequentialGroup()
-                        .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ButtonInputUserSimpan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ButtonInputUserEdit)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ButtonInputUserHapus)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ButtonInputUserCari, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(FieldInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LabelInputUser2)
-                    .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LabelInputUser5))
-                .addGap(31, 31, 31)
-                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LabelInputUser3)
-                    .addComponent(LabelInputUser6)
-                    .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FieldInputUser3, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LabelInputUser4)
-                    .addComponent(roleTx, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(inputRole))
-                .addGap(25, 25, 25))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelInputUser2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ButtonInputUserSimpan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ButtonInputUserEdit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ButtonInputUserHapus)
-                .addGap(35, 35, 35))
+                        .addComponent(ButtonInputUserBatal))
+                    .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(PanelInputUser2Layout.createSequentialGroup()
+                                .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ButtonInputUserCari, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(FieldInputUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LabelInputUser2)
+                            .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LabelInputUser5))
+                        .addGap(31, 31, 31)
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(FieldInputUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LabelInputUser3)
+                            .addComponent(LabelInputUser6)
+                            .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(FieldInputUser3, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .addComponent(LabelInputUser4)
+                            .addComponent(inputRole)
+                            .addComponent(cmbBoxUser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         PanelInputUser2Layout.setVerticalGroup(
             PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1126,21 +1348,22 @@ public class Admin extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(FieldInputUser4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(FieldInputUser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(PanelInputUser2Layout.createSequentialGroup()
                         .addComponent(inputRole)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(roleTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(32, 32, 32)))
                 .addGap(38, 38, 38)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(FieldInputUser6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ButtonInputUserCari))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButtonInputUserSimpan)
                     .addComponent(ButtonInputUserEdit)
-                    .addComponent(ButtonInputUserHapus))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(ButtonInputUserHapus)
+                    .addComponent(ButtonInputUserBatal))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         TabelInputUser1.setModel(new javax.swing.table.DefaultTableModel(
@@ -1160,6 +1383,11 @@ public class Admin extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        TabelInputUser1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TabelInputUser1MouseClicked(evt);
             }
         });
         TabelInputUser.setViewportView(TabelInputUser1);
@@ -1197,24 +1425,31 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
-        inputKodeBarcode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputKodeBarcodeActionPerformed(evt);
-            }
-        });
-
         searchInputBarcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchInputBarcodeActionPerformed(evt);
             }
         });
+        searchInputBarcode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                searchInputBarcodeKeyTyped(evt);
+            }
+        });
 
         saveBtnBarcode.setLabel("Simpan");
         saveBtnBarcode.setName("Simpan"); // NOI18N
-
-        EditBtnBarcode.setLabel("Edit");
+        saveBtnBarcode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveBtnBarcodeActionPerformed(evt);
+            }
+        });
 
         hapusBtnBarcode.setLabel("Hapus");
+        hapusBtnBarcode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBtnBarcodeActionPerformed(evt);
+            }
+        });
 
         cariBtnBarcode.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         cariBtnBarcode.setLabel("Cari");
@@ -1223,9 +1458,6 @@ public class Admin extends javax.swing.JFrame {
                 cariBtnBarcodeActionPerformed(evt);
             }
         });
-
-        kodeBarcode.setForeground(new java.awt.Color(80, 80, 80));
-        kodeBarcode.setText("Kode Barcode");
 
         diskonBarcode.setForeground(new java.awt.Color(80, 80, 80));
         diskonBarcode.setText("Diskon");
@@ -1239,41 +1471,31 @@ public class Admin extends javax.swing.JFrame {
                 .addGroup(ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(diskonBarcode)
                     .addGroup(ceteakBarccodePanelLayout.createSequentialGroup()
-                        .addComponent(inputKodeBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(inputDiskonBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(searchInputBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cariBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(ceteakBarccodePanelLayout.createSequentialGroup()
-                            .addComponent(saveBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(EditBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(hapusBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(inputDiskonBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(kodeBarcode))
-                .addContainerGap(207, Short.MAX_VALUE))
+                    .addGroup(ceteakBarccodePanelLayout.createSequentialGroup()
+                        .addComponent(saveBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(hapusBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(243, Short.MAX_VALUE))
         );
         ceteakBarccodePanelLayout.setVerticalGroup(
             ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ceteakBarccodePanelLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(kodeBarcode)
+                .addComponent(diskonBarcode)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(inputKodeBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(searchInputBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(searchInputBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(inputDiskonBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cariBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(diskonBarcode)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputDiskonBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(ceteakBarccodePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(EditBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hapusBtnBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(54, 54, 54))
         );
@@ -1351,7 +1573,7 @@ public class Admin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sideBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1377,6 +1599,7 @@ public class Admin extends javax.swing.JFrame {
         mainPanel.add(inputMenu);
         mainPanel.repaint();
         mainPanel.revalidate();
+        loadDataMenu();
     }//GEN-LAST:event_inputMenuBtnActionPerformed
 
     private void logOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutBtnActionPerformed
@@ -1607,15 +1830,45 @@ byte[] imageBytes = outputStream.toByteArray();
 
     private void ButtonInputUserSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserSimpanActionPerformed
         // TODO add your handling code here:
+//        String id = FieldInputUser1.getText();
+        String username = FieldInputUser4.getText();
+        String noHp = FieldInputUser2.getText();
+        String password = FieldInputUser5.getText();
+        String alamat = FieldInputUser3.getText();
+        String role = (String) cmbBoxUser.getSelectedItem();
+        
+        try{
+            if (FieldInputUser4.getText().length() > 0 && FieldInputUser2.getText().length() > 0 && FieldInputUser5.getText().length() > 0  && FieldInputUser3.getText().length() > 0) {
+                java.sql.Connection c = Koneksi.getKoneksi();
+                String sql = "INSERT INTO user ( username, password, No_Hp, Alamt, Role) values(?,?,?,?,?)";
+                java.sql.PreparedStatement p = c.prepareStatement(sql);
+                p.setString(1, username);
+                p.setString(2, password);
+                p.setString(3, noHp);
+                p.setString(4, alamat);
+                p.setString(5, role);
+                
+                p.executeUpdate();
+                p.close();
+                JOptionPane.showMessageDialog(null, "Data Tersimpan");
+                loadDataUser();
+                FieldInputUser1.setText("");
+                FieldInputUser4.setText("");
+                FieldInputUser2.setText("");
+                FieldInputUser5.setText("");
+                FieldInputUser3.setText("");
+                autoNumberUser();
+            }else{
+                JOptionPane.showMessageDialog(null, "Data Tidak Lengkap");
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }//GEN-LAST:event_ButtonInputUserSimpanActionPerformed
 
     private void searchInputBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputBarcodeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchInputBarcodeActionPerformed
-
-    private void inputKodeBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputKodeBarcodeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputKodeBarcodeActionPerformed
 
     private void inputDiskonBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputDiskonBarcodeActionPerformed
         // TODO add your handling code here:
@@ -1623,18 +1876,15 @@ byte[] imageBytes = outputStream.toByteArray();
 
     private void cariBtnBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBtnBarcodeActionPerformed
         // TODO add your handling code here:
+        cari();
     }//GEN-LAST:event_cariBtnBarcodeActionPerformed
 
     private void cariBtnHistoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBtnHistoriActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cariBtnHistoriActionPerformed
 
-    private void roleTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roleTxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_roleTxActionPerformed
-
     private void uploadBtnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnMenuActionPerformed
-        // TODO add your handling code here:
+            // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
@@ -1688,6 +1938,305 @@ byte[] imageBytes = outputStream.toByteArray();
           ButtonSimpan.setEnabled(true);
     }//GEN-LAST:event_ButtonHapus1ActionPerformed
 
+    private void cetakBarcodeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cetakBarcodeBtnActionPerformed
+        // TODO add your handling code here:
+        mainPanel.removeAll();
+        mainPanel.repaint();
+        mainPanel.revalidate();
+        
+        mainPanel.add(cetakBarcode);
+        mainPanel.repaint();
+        mainPanel.revalidate();
+    }//GEN-LAST:event_cetakBarcodeBtnActionPerformed
+
+    private void saveBtnBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnBarcodeActionPerformed
+        // TODO add your handling code here: 
+        try {
+            Linear barcode = new Linear();
+            barcode.setType(Linear.CODE39);
+            barcode.setData(inputDiskonBarcode.getText());
+            barcode.setI(11.0f);
+            
+            String fname = inputDiskonBarcode.getText();
+            barcode.renderBarcode("C:\\daffa\\" + fname + ".png" );
+            File barcodeFile = new File("C:\\daffa\\" + fname + ".png");
+    
+    // Membaca data gambar sebagai byte array
+    FileInputStream fis = new FileInputStream(barcodeFile);
+    byte[] imageData = new byte[(int) barcodeFile.length()];
+    fis.read(imageData);
+    fis.close();
+
+                
+    // Memasukkan data gambar ke dalam database
+    java.sql.Connection c = Koneksi.getKoneksi();
+    String sql = "INSERT INTO barcode (diskon, barcode) VALUES (?, ?)";
+    java.sql.PreparedStatement p = c.prepareStatement(sql);
+    p.setString(1, inputDiskonBarcode.getText());
+    p.setBytes(2, imageData);
+    p.executeUpdate();
+    p.close();
+
+    JOptionPane.showMessageDialog(null, "Data Tersimpan");
+        } catch (Exception e) {
+            System.out.println("Terjadi Kesalahan" + e.getMessage());
+        }finally{
+            clearBarcode();
+            inputDiskonBarcode.setText("");
+           loadDataBarcode();
+        }
+    }//GEN-LAST:event_saveBtnBarcodeActionPerformed
+
+    private void hapusBtnBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBtnBarcodeActionPerformed
+        // TODO add your handling code here:
+        int i = barcodeTabel.getSelectedRow();
+        if(i == -1 ){
+            JOptionPane.showMessageDialog(null, "Pilih Data Terlebih Dahulu");
+            return;
+        }
+        String id = (String)barcodeModel.getValueAt(i,0);
+        int question = JOptionPane.showConfirmDialog(null, "Yakin ingin mneghapus data?", "konfirmasi", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(question == JOptionPane.OK_OPTION){
+            try{
+                 java.sql.Connection c = Koneksi.getKoneksi();
+                 String sql = "DELETE from barcode where kode_barcode = ? ";
+                 java.sql.PreparedStatement p = c.prepareStatement(sql);
+                 p.setString(1, id);
+                 p.execute();
+                 p.close();
+                 JOptionPane.showMessageDialog(null, "Data Terhapus");
+                 loadDataMenu();
+                 autoNumberMenu();
+                 hapusBtnBarcode.setEnabled(true);
+            }catch(Exception e){
+                System.out.println(e);
+            }
+          loadDataBarcode();
+        }
+        if(question == JOptionPane.CANCEL_OPTION){
+            
+        }
+    }//GEN-LAST:event_hapusBtnBarcodeActionPerformed
+
+    private void FieldInputMenu6KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FieldInputMenu6KeyTyped
+        // TODO add your handling code here:
+        String key = FieldInputMenu6.getText();
+        DefaultTableModel tabel = new DefaultTableModel();
+        tabel.addColumn("Kode Makanan");
+        tabel.addColumn("Nama Makanan");
+        tabel.addColumn("Harga Beli");
+        tabel.addColumn("Harga Jual");
+        tabel.addColumn("Foto Makanan");
+          try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT * FROM menu WHERE nama_makanan LIKE '%" + key + "%' ORDER BY nama_makanan";
+            ResultSet r = s.executeQuery(sql);
+           
+            while(r.next()){
+                byte[] imageData = r.getBytes("foto_makanan");
+                ImageIcon imageIcon = new ImageIcon(imageData);
+                tabel.addRow(new Object[]{
+               r.getString(1),
+               r.getString(2),
+               r.getString(3),
+               r.getString(4),
+               imageIcon
+            }); 
+            tabelMenu.setModel(tabel);
+            }
+            r.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+          loadDataMenu();
+           setTableRenderMenu();
+    }//GEN-LAST:event_FieldInputMenu6KeyTyped
+
+    private void cariTxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cariTxKeyTyped
+        // TODO add your handling code here:
+        String key = cariTx.getText();
+        DefaultTableModel tabel = new DefaultTableModel();
+         tabel.addColumn("No");
+        tabel.addColumn("Kode Transaksi");
+        tabel.addColumn("Nama Makanan");
+        tabel.addColumn("Jumlah");
+        tabel.addColumn("Harga Beli");
+        tabel.addColumn("Harga Jual");
+        tabel.addColumn("Tanggal");
+          try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT ROW_NUMBER() OVER (ORDER BY detail_transaksi.kode_transaksi) AS nomor,\n" +
+"    detail_transaksi.kode_transaksi,\n" +
+"    menu.nama_makanan,\n" +
+"    COUNT(menu.nama_makanan) AS jumlah,\n" +
+"    menu.harga_beli,\n" +
+"    menu.harga_jual,\n" +
+"    transaksi.tanggal\n" +
+"FROM detail_transaksi\n" +
+"INNER JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi\n" +
+"INNER JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan\n" +
+"WHERE detail_transaksi.kode_transaksi LIKE '%"+key+"%' \n" +
+"    OR menu.nama_makanan LIKE '%"+key+"%'\n" +
+"    OR transaksi.tanggal LIKE '%"+key+"%'\n" +
+"GROUP BY detail_transaksi.kode_transaksi,\n" +
+"    menu.nama_makanan,\n" +
+"    menu.harga_beli,\n" +
+"    menu.harga_jual,\n" +
+"    transaksi.tanggal;";
+            ResultSet r = s.executeQuery(sql);
+           
+            while(r.next()){
+                tabel.addRow(new Object[]{
+               r.getString(1),
+               r.getString(2),
+               r.getString(3),
+               r.getString(4),
+               r.getString(5),
+               r.getString(6),
+               r.getString(7),
+            });
+            tabelHistori.setModel(tabel);
+            }
+            r.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+       loadHistori();
+  
+    }//GEN-LAST:event_cariTxKeyTyped
+
+    private void searchInputBarcodeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchInputBarcodeKeyTyped
+        // TODO add your handling code here:
+         cari();
+    }//GEN-LAST:event_searchInputBarcodeKeyTyped
+
+    private void ButtonInputUserEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserEditActionPerformed
+        // TODO add your handling code here:
+         int i = TabelInputUser1.getSelectedRow();
+        if(i == -1 ){
+            JOptionPane.showMessageDialog(null, "Pilih Data Terlebih Dahulu");
+            return;
+        }
+        String id = (String)userModel.getValueAt(i,0);
+        String username = FieldInputUser4.getText();
+        String noHp = FieldInputUser2.getText();
+        String password = FieldInputUser5.getText();
+        String alamat = FieldInputUser3.getText();
+        String role = (String) cmbBoxUser.getSelectedItem();
+        
+        if (FieldInputUser4.getText().length() > 0 && FieldInputUser2.getText().length() > 0 && FieldInputUser5.getText().length() > 0  && FieldInputUser3.getText().length() > 0) {
+        try{
+          java.sql.Connection c = Koneksi.getKoneksi();
+         String sql = "UPDATE user SET username = ?, password = ?, No_Hp = ?, Alamt = ?, Role = ? where kode_user = ?";
+                java.sql.PreparedStatement p = c.prepareStatement(sql);
+                p.setString(1, username);
+                p.setString(2, password);
+                p.setString(3, noHp);
+                p.setString(4, alamat);
+                p.setString(5, role);
+                p.setString(6, id);
+          p.executeUpdate();
+          p.close();
+          JOptionPane.showMessageDialog(null, "Data Berhasil Di Edit");
+          FieldInputUser4.setText("");
+          FieldInputUser2.setText("");
+          FieldInputUser5.setText("");
+          FieldInputUser3.setText("");
+          LbFoto_Makanan.setIcon(null);
+          loadDataUser();
+          autoNumberUser();
+          ButtonSimpan.setEnabled(true);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        } else {
+             JOptionPane.showMessageDialog(null, "Data Tidak Lengkap");
+        }
+        
+    }//GEN-LAST:event_ButtonInputUserEditActionPerformed
+
+    private void TabelInputUser1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelInputUser1MouseClicked
+        // TODO add your handling code here:
+        ButtonInputUserSimpan.setEnabled(false);
+        int i = TabelInputUser1.getSelectedRow();
+        if(i == -1 ){
+            return;
+        }
+        String id = (String) userModel.getValueAt(i,0);
+        String username = (String) userModel.getValueAt(i,1);
+        String password = (String) userModel.getValueAt(i,2);
+        String No_Hp = (String) userModel.getValueAt(i,3);
+        String alamat = (String) userModel.getValueAt(i,4);
+        
+        
+        FieldInputUser1.setText(id);
+        FieldInputUser4.setText(username);
+        FieldInputUser5.setText(password);
+        FieldInputUser2.setText(No_Hp);
+        FieldInputUser3.setText(alamat);
+        
+    }//GEN-LAST:event_TabelInputUser1MouseClicked
+
+    private void ButtonInputUserHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserHapusActionPerformed
+        // TODO add your handling code here:
+        int i = TabelInputUser1.getSelectedRow();
+        if(i == -1 ){
+            JOptionPane.showMessageDialog(null, "Pilih Data Terlebih Dahulu");
+            return;
+        }
+        String id = (String)userModel.getValueAt(i,0);
+        int question = JOptionPane.showConfirmDialog(null, "Yakin ingin mneghapus data?", "konfirmasi", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(question == JOptionPane.OK_OPTION){
+            try{
+                 java.sql.Connection c = Koneksi.getKoneksi();
+                 String sql = "DELETE from user where kode_user = ?";
+                 java.sql.PreparedStatement p = c.prepareStatement(sql);
+                 p.setString(1, id);
+                 p.execute();
+                 p.close();
+                 JOptionPane.showMessageDialog(null, "Data Terhapus");
+                 loadDataMenu();
+                 autoNumberMenu();
+                 ButtonInputUserSimpan.setEnabled(true);
+            }catch(Exception e){
+                System.out.println(e);
+            }
+            FieldInputUser1.setText("");
+        FieldInputUser4.setText("");
+        FieldInputUser5.setText("");
+        FieldInputUser2.setText("");
+        FieldInputUser3.setText("");
+          loadDataUser();
+          autoNumberUser();
+        }
+        if(question == JOptionPane.CANCEL_OPTION){
+            
+        }
+    }//GEN-LAST:event_ButtonInputUserHapusActionPerformed
+
+    private void ButtonInputUserBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserBatalActionPerformed
+        // TODO add your handling code here:
+        FieldInputUser4.setText("");
+          FieldInputUser5.setText("");
+          FieldInputUser2.setText("");
+          FieldInputUser3.setText("");
+          autoNumberUser();
+          ButtonInputUserSimpan.setEnabled(true);
+    }//GEN-LAST:event_ButtonInputUserBatalActionPerformed
+
+    private void KasirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KasirBtnActionPerformed
+        // TODO add your handling code here:
+         Kasir kasir = new Kasir();
+         kasir.setVisible(true);
+         usernameKasir.setText(namaAdmin.getText());
+    }//GEN-LAST:event_KasirBtnActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -1723,12 +2272,12 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JButton ButtonEdit;
     private javax.swing.JButton ButtonHapus;
     private javax.swing.JButton ButtonHapus1;
+    private javax.swing.JButton ButtonInputUserBatal;
     private javax.swing.JButton ButtonInputUserCari;
     private javax.swing.JButton ButtonInputUserEdit;
     private javax.swing.JButton ButtonInputUserHapus;
     private javax.swing.JButton ButtonInputUserSimpan;
     private javax.swing.JButton ButtonSimpan;
-    private java.awt.Button EditBtnBarcode;
     private javax.swing.JTextField FieldInputMenu1;
     private javax.swing.JTextField FieldInputMenu2;
     private javax.swing.JTextField FieldInputMenu4;
@@ -1741,6 +2290,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JTextField FieldInputUser5;
     private javax.swing.JTextField FieldInputUser6;
     private javax.swing.JPanel InputUser;
+    private javax.swing.JButton KasirBtn;
     private javax.swing.JLabel LabelInputMenu1;
     private javax.swing.JLabel LabelInputMenu2;
     private javax.swing.JLabel LabelInputMenu5;
@@ -1766,8 +2316,10 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JButton cariBtnHistori;
     private javax.swing.JTextField cariTx;
     private javax.swing.JPanel cetakBarcode;
+    private javax.swing.JButton cetakBarcodeBtn;
     private javax.swing.JPanel ceteakBarccodePanel;
     private chart.CurveLineChart chart;
+    private javax.swing.JComboBox<String> cmbBoxUser;
     private javax.swing.JPanel dashboard;
     private javax.swing.JLabel dashboardLabel;
     private javax.swing.JPanel dashboardNav;
@@ -1782,7 +2334,6 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JScrollPane historiScrollPane;
     private javax.swing.JButton homeBtn;
     private javax.swing.JTextField inputDiskonBarcode;
-    private javax.swing.JTextField inputKodeBarcode;
     private javax.swing.JPanel inputMenu;
     private javax.swing.JButton inputMenuBtn;
     private javax.swing.JLabel inputRole;
@@ -1795,17 +2346,17 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneBarcode;
     private javax.swing.JTable jTable2;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton karyawanBtn;
-    private javax.swing.JLabel kodeBarcode;
     private javax.swing.JButton logOutBtn;
     private javax.swing.JPanel mainPanel;
+    public static final javax.swing.JLabel namaAdmin = new javax.swing.JLabel();
     private baksopuas.roundedJpanelShadow pemasukan;
     private javax.swing.JLabel pemasukanTx;
     private baksopuas.roundedJpanelShadow pengeluaran;
     private javax.swing.JLabel pengeluaranTx;
     private baksopuas.roundedJpanelShadow profit;
     private javax.swing.JLabel profitTx;
-    private javax.swing.JTextField roleTx;
     private java.awt.Button saveBtnBarcode;
     private javax.swing.JTextField searchInputBarcode;
     private javax.swing.JPanel sideBar;

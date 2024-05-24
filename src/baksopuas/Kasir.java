@@ -29,9 +29,11 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -92,7 +94,10 @@ public class Kasir extends javax.swing.JFrame {
                 itemPanel.add(labelNama, BorderLayout.CENTER);
                 
                 // Menambahkan harga
-                JLabel labelHarga = new JLabel("Rp " + r.getInt("harga_jual"));
+                Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String harga = formatRupiah.format(r.getInt("harga_jual"));
+                JLabel labelHarga = new JLabel(harga);
                 labelHarga.setHorizontalAlignment(SwingConstants.CENTER);
                 itemPanel.add(labelHarga, BorderLayout.SOUTH);
                 
@@ -127,8 +132,9 @@ public void addData() {
           // Menambahkan data ke tabel
           String namaMakanan = ((JLabel) itemPanel.getComponent(1)).getText();
           String harga = ((JLabel) itemPanel.getComponent(2)).getText().trim();
-          String hargaMakanan = harga.replace("Rp ", "");
-          int intHargaMakanan = Integer.parseInt(hargaMakanan);
+            String cleanedInput = harga.replaceAll("\\,[\\d]*$", "").replace(".", "");
+       cleanedInput = cleanedInput.replaceAll("^Rp", "");
+          int intHargaMakanan = Integer.parseInt(cleanedInput);
 
           // Menghitung jumlah
           int jumlah;
@@ -162,7 +168,10 @@ public void totalBiaya() {
     hargaJual = Integer.parseInt(jTable1.getValueAt(i, 2).toString());
     totalBiaya = totalBiaya + (jumlahBarang * hargaJual);
   }
-  total.setText("Rp "+ totalBiaya+ ",00");
+   Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String harga = formatRupiah.format(totalBiaya);
+  total.setText(harga);
 }
   
     public void getDate(){
@@ -171,17 +180,19 @@ public void totalBiaya() {
          String formattedDate = formatter.format(today);
          tanggal.setText(formattedDate);
     }
+
     public Kasir() {
         initComponents();
         loadMenu();
         getDate();
         addData();
-        
+
 //        if(model.getRowCount() != -1){
             jButton3.setEnabled(false);
 //        }else{
 //              jButton1.setEnabled(true);
 //        }
+   
     }
 
     /**
@@ -217,7 +228,6 @@ public void totalBiaya() {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -234,6 +244,9 @@ public void totalBiaya() {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("MENU");
 
+        usernameKasir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        usernameKasir.setText("Nama");
+
         javax.swing.GroupLayout panelRound3Layout = new javax.swing.GroupLayout(panelRound3);
         panelRound3.setLayout(panelRound3Layout);
         panelRound3Layout.setHorizontalGroup(
@@ -241,13 +254,17 @@ public void totalBiaya() {
             .addGroup(panelRound3Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jLabel1)
-                .addContainerGap(420, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(usernameKasir)
+                .addGap(35, 35, 35))
         );
         panelRound3Layout.setVerticalGroup(
             panelRound3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelRound3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                .addGroup(panelRound3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                    .addComponent(usernameKasir))
                 .addContainerGap())
         );
 
@@ -297,7 +314,7 @@ public void totalBiaya() {
         panelRound4Layout.setHorizontalGroup(
             panelRound4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRound4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(125, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(113, 113, 113))
         );
@@ -360,6 +377,17 @@ public void totalBiaya() {
         total.setEditable(false);
         total.setForeground(new java.awt.Color(153, 153, 153));
 
+        bayarTx.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bayarTxActionPerformed(evt);
+            }
+        });
+        bayarTx.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                bayarTxKeyTyped(evt);
+            }
+        });
+
         kembalian.setEditable(false);
         kembalian.setForeground(new java.awt.Color(153, 153, 153));
 
@@ -387,20 +415,10 @@ public void totalBiaya() {
             }
         });
 
-        jButton5.setText("scan");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout roundedJpanel2Layout = new javax.swing.GroupLayout(roundedJpanel2);
         roundedJpanel2.setLayout(roundedJpanel2Layout);
         roundedJpanel2Layout.setHorizontalGroup(
             roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundedJpanel2Layout.createSequentialGroup()
-                .addComponent(panelRound4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(11, 11, 11))
             .addGroup(roundedJpanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -419,9 +437,7 @@ public void totalBiaya() {
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedJpanel2Layout.createSequentialGroup()
                             .addComponent(jLabel5)
                             .addGap(18, 18, 18)
-                            .addComponent(diskonTx, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(diskonTx))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedJpanel2Layout.createSequentialGroup()
                             .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel6)
@@ -433,6 +449,9 @@ public void totalBiaya() {
                                 .addComponent(bayarTx, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(roundedJpanel2Layout.createSequentialGroup()
+                .addComponent(panelRound4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         roundedJpanel2Layout.setVerticalGroup(
             roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -448,8 +467,7 @@ public void totalBiaya() {
                 .addGap(18, 18, 18)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(diskonTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(diskonTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(roundedJpanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -520,19 +538,25 @@ public void totalBiaya() {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        
          if(bayarTx.getText().length() > 0){
                   Date today = new Date();
             SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy/MM/dd");
             String formattedDate1 = formatter1.format(today);
         String bayar = bayarTx.getText().toString();
         int intBayar = Integer.parseInt(bayar);
-        String totalBayar = total.getText().replace("Rp ", "").replace(",00", "");
+         String cleanedInput = total.getText().replaceAll("\\,[\\d]*$", "").replace(".", "");
+       cleanedInput = cleanedInput.replaceAll("^Rp", "");
+        String totalBayar = cleanedInput;
         int intTotalbayar = Integer.parseInt(totalBayar);
         int totalKembalian =  intBayar - intTotalbayar; 
         if(totalKembalian < 0){
             JOptionPane.showMessageDialog(null, "Uang Pembayaran Kurang");
         }else{
-            kembalian.setText("Rp "+String.valueOf(totalKembalian));
+            Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String harga = formatRupiah.format(totalKembalian);
+            kembalian.setText(harga);
             try {
                  Connection c = Koneksi.getKoneksi();
                  String kembalianInt = kembalian.getText().replaceAll("[^\\d.-]", "");
@@ -572,6 +596,7 @@ public void totalBiaya() {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+      
        int kodeTransaksi = 0;
        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
         if(bayarTx.getText().length() > 0){
@@ -596,36 +621,35 @@ public void totalBiaya() {
                  int contentHeight = totalRows * rowHeight; // Tinggi konten data
                  int totalHeight = headerHeight + footerHeight + contentHeight + tableBorder; // Total tinggi halaman
             PDDocument document  = new PDDocument();
-            PDPage page = new PDPage(new PDRectangle(250, totalHeight+100));
+            PDPage page = new PDPage(new PDRectangle(350, totalHeight+100));
             Date today = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String formattedDate = formatter.format(today);
             document.addPage(page);
             int startX = 20;
             int startY = totalHeight-100;
-            int startY1 = startY+90;
-            int tableWidth = 250;
+            int startY1 = startY+60;
+            int tableWidth = 350;
             int colWidth = tableWidth / 3;
-                 System.out.println(totalHeight);
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             PDType0Font font = PDType0Font.load(document, new File("C:\\Users\\Daffa Lintang\\Downloads\\font\\Helvetica.ttf"));
             
-            contentStream.setFont(font, 16);
+            contentStream.setFont(font, 20);
             contentStream.beginText();
             contentStream.newLineAtOffset(20, startY+180);
-            contentStream.showText("              Bakso Puas");
+            contentStream.showText("                    Bakso Puas");
             contentStream.endText();
             
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 12);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(20, startY+160);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.showText("--------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(20, startY+140);
              contentStream.showText("Kode Transaksi : "+kodeTransaksi);
@@ -633,23 +657,31 @@ public void totalBiaya() {
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(20, startY+120);
              contentStream.showText("Tanggal : "+formattedDate);
              contentStream.newLine();
              contentStream.endText();
-            
+             
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 12);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(20, startY+100);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.showText("Kasir : "+usernameKasir.getText());
+             contentStream.newLine();
+             contentStream.endText();
+            
+             contentStream.setNonStrokingColor(0,0,0);
+             contentStream.setFont(font, 16);
+             contentStream.beginText();
+             contentStream.newLineAtOffset(20, startY+80);
+             contentStream.showText("--------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
             
             contentStream.setNonStrokingColor(0,0,0);
-            contentStream.setFont(font, 10);
+            contentStream.setFont(font, 16);
             contentStream.beginText();
             contentStream.newLineAtOffset(startX, startY1);
             contentStream.showText("Nama");
@@ -660,7 +692,7 @@ public void totalBiaya() {
             contentStream.newLineAtOffset(colWidth, 0);  
             contentStream.endText();
             contentStream.setNonStrokingColor(0,0,0);
-            contentStream.setFont(font, 8);
+            contentStream.setFont(font, 12);
             for(int i = 0; i < jTable1.getRowCount(); i++){
                 contentStream.beginText();
                 contentStream.newLineAtOffset(startX, startY1 -(i + 1)* rowHeight);
@@ -702,15 +734,15 @@ public void totalBiaya() {
             }
             
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 12);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() +1)  * rowHeight);
-             contentStream.showText("-----------------------------------------------------");
+             contentStream.showText("--------------------------------------------------------");
              contentStream.newLine();
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 2)  * rowHeight);
              contentStream.showText("Total : " + total.getText());
@@ -718,7 +750,7 @@ public void totalBiaya() {
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 3)  * rowHeight);
              contentStream.showText("Bayar : Rp " + bayarTx.getText());
@@ -726,7 +758,7 @@ public void totalBiaya() {
              contentStream.endText();
              
              contentStream.setNonStrokingColor(0,0,0);
-             contentStream.setFont(font, 10);
+             contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 4)  * rowHeight);
              contentStream.showText("Kembalian :" + kembalian.getText());
@@ -773,7 +805,7 @@ public void totalBiaya() {
        
        String bayar = total.getText();
        String cleanedInput = bayar.replaceAll("\\,[\\d]*$", "");
-       cleanedInput = cleanedInput.replaceAll("^Rp", "");
+       cleanedInput = cleanedInput.replaceAll("^Rp", "").replace(".", "");
         System.out.println(cleanedInput);
        double cleanedInput1 = Double.parseDouble(cleanedInput);
        double totalBayar = cleanedInput1;
@@ -782,23 +814,35 @@ public void totalBiaya() {
        double totalDiskon = totalBayar * diskon;
        double diskonbayar = totalBayar - totalDiskon;
        int diskonBayar1 = (int) diskonbayar;
-       total.setText("Rp "+Integer.toString(diskonBayar1));
+       Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String harga = formatRupiah.format(diskonBayar1);
+       total.setText(harga);
     }//GEN-LAST:event_diskonTxActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void bayarTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bayarTxActionPerformed
         // TODO add your handling code here:
-        try{
-           InputStream barInputStream = new FileInputStream("C:\\Users\\Daffa Lintang\\Downloads\\0.02.png");
-           BufferedImage bufferedImage = ImageIO.read(barInputStream);
-           LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-           BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-           MultiFormatReader reader = new MultiFormatReader();
-           Result result = reader.decode(bitmap);
-           diskonTx.setText(result.getText());
-       }catch(Exception e){
-           System.out.println(e);
-       }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_bayarTxActionPerformed
+
+    private void bayarTxKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_bayarTxKeyTyped
+        // TODO add your handling code here:
+//        Locale rupiah = new Locale("id", "ID");
+//        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+//        try {
+//    // Parse the text from bayarTx to a number
+//    String bayarText = bayarTx.getText();
+//    double bayarValue = Double.parseDouble(bayarText);
+//
+//    // Format the number to currency format
+//    String harga = formatRupiah.format(bayarValue);
+//
+//    // Set the formatted currency string back to bayarTx
+//    bayarTx.setText(harga);
+//} catch (NumberFormatException e) {
+//    // Handle the case where the text is not a valid number
+//            System.out.println(e);
+//}
+    }//GEN-LAST:event_bayarTxKeyTyped
 
     /**
      * @param args the command line arguments
@@ -842,7 +886,6 @@ public void totalBiaya() {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -862,5 +905,6 @@ public void totalBiaya() {
     private baksopuas.roundedJpanelShadow roundedJpanel2;
     private javax.swing.JLabel tanggal;
     private javax.swing.JTextField total;
+    public static final javax.swing.JLabel usernameKasir = new javax.swing.JLabel();
     // End of variables declaration//GEN-END:variables
 }
