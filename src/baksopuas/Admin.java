@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
 import javax.swing.Icon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 /**
  *
@@ -404,6 +405,8 @@ public class Admin extends javax.swing.JFrame {
        userModel.addColumn("No_Hp");
        loadDataUser();
        autoNumberUser();
+       
+       setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -1246,6 +1249,11 @@ public class Admin extends javax.swing.JFrame {
                 FieldInputUser6ActionPerformed(evt);
             }
         });
+        FieldInputUser6.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                FieldInputUser6KeyTyped(evt);
+            }
+        });
 
         ButtonInputUserCari.setText("Cari");
         ButtonInputUserCari.addActionListener(new java.awt.event.ActionListener() {
@@ -1573,7 +1581,7 @@ public class Admin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sideBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1730,7 +1738,6 @@ public class Admin extends javax.swing.JFrame {
          Icon icon = LbFoto_Makanan.getIcon();
             ImageIcon imageIcon = (ImageIcon) icon;
             Image image = imageIcon.getImage();
-            
             BufferedImage bufferedImage = new BufferedImage(imageIcon.getIconWidth(), imageIcon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
 Graphics2D g2d = bufferedImage.createGraphics();
 g2d.drawImage(image, 0, 0, null);
@@ -2236,6 +2243,42 @@ byte[] imageBytes = outputStream.toByteArray();
          kasir.setVisible(true);
          usernameKasir.setText(namaAdmin.getText());
     }//GEN-LAST:event_KasirBtnActionPerformed
+
+    private void FieldInputUser6KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FieldInputUser6KeyTyped
+        // TODO add your handling code here:
+        String key = FieldInputUser6.getText();
+        DefaultTableModel tabel = new DefaultTableModel();
+        tabel.addColumn("Kode_User");
+        tabel.addColumn("Username");
+        tabel.addColumn("Password");
+        tabel.addColumn("Role");
+        tabel.addColumn("Alamat");
+        tabel.addColumn("No_Hp");
+          try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            java.sql.Statement s = c.createStatement();
+            
+            String sql = "SELECT * FROM user WHERE username LIKE '%" + key + "%' ORDER BY username";
+            ResultSet r = s.executeQuery(sql);
+           
+            while(r.next()){
+                tabel.addRow(new Object[]{
+               r.getString(1),
+               r.getString(2),
+               r.getString(3),
+               r.getString(4),
+               r.getString(5),
+               r.getString(6),
+            }); 
+            TabelInputUser1.setModel(tabel);
+            }
+            r.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+          loadDataUser();
+    }//GEN-LAST:event_FieldInputUser6KeyTyped
 
 
     /**

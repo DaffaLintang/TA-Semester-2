@@ -38,6 +38,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -186,12 +187,9 @@ public void totalBiaya() {
         loadMenu();
         getDate();
         addData();
-
-//        if(model.getRowCount() != -1){
+setExtendedState(JFrame.MAXIMIZED_BOTH);
             jButton3.setEnabled(false);
-//        }else{
-//              jButton1.setEnabled(true);
-//        }
+
    
     }
 
@@ -749,11 +747,14 @@ public void totalBiaya() {
              contentStream.newLine();
              contentStream.endText();
              
+            Locale rupiah = new Locale("id", "ID");
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(rupiah);
+            String bayar = formatRupiah.format(Integer.parseInt(bayarTx.getText()));
              contentStream.setNonStrokingColor(0,0,0);
              contentStream.setFont(font, 16);
              contentStream.beginText();
              contentStream.newLineAtOffset(startX, startY1 - (jTable1.getRowCount() + 3)  * rowHeight);
-             contentStream.showText("Bayar : Rp " + bayarTx.getText());
+             contentStream.showText("Bayar : Rp " + bayar);
              contentStream.newLine();
              contentStream.endText();
              
