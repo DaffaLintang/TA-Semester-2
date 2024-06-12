@@ -6,11 +6,17 @@ package baksopuas;
 
 import static baksopuas.Kasir.usernameKasir;
 import chart.ModelChart;
+import datechooser.listener.DateChooserAction;
+import datechooser.listener.DateChooserAdapter;
+
 import com.barcodelib.barcode.Linear;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
+import datechooser.DateChooser;
+import datechooser.listener.DateChooserListener;
+import datechooser.DateBetween;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
@@ -18,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.awt.Graphics2D;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -350,9 +358,113 @@ public class Admin extends javax.swing.JFrame {
 }
        barcodeTabel.getColumnModel().getColumn(2).setCellRenderer(new CustomRenderer());
 } 
+    public void cariTanggalHistori(String sql){
+        try{
+            java.sql.Connection c = Koneksi.getKoneksi();
+            modelHistori.setRowCount(0);
+            SimpleDateFormat df = new SimpleDateFormat("dd-MMMM-yyyy");
+            DecimalFormat f = new DecimalFormat("$ #,##0.##");
+            java.sql.PreparedStatement p = c.prepareStatement(sql);
+            ResultSet r = p.executeQuery();
+            while(r.next()){
+                Object[] o = new Object[7];
+                o[0] = r.getInt("nomor");
+                o[1] = r.getInt("kode_transaksi");
+                o[2] = r.getString("nama_makanan");
+                o[3] = r.getInt("jumlah");
+                o[4] = r.getInt("harga_beli");
+                o[5] = r.getInt("harga_jual");
+                o[6] = r.getString("tanggal");
+                
+                modelHistori.addRow(o); 
+            }
+            r.close();
+            p.close();
+        } catch (Exception e){
+            System.out.println();
+        }
+    }
+    
+   public void cariChartData(String sql) {
+    try {
+        chart.clear();
+        java.sql.Connection c = Koneksi.getKoneksi();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMMM-yyyy");
+        DecimalFormat f = new DecimalFormat("$ #,##0.##");
+        List<ModelData> list = new ArrayList<>();
+        java.sql.PreparedStatement s = c.prepareStatement(sql);
+        ResultSet r = s.executeQuery();
+        while (r.next()) {
+            String month = r.getString("Date");
+            double pengeluaran = (double) r.getInt("total_pengeluaran");
+            double pendapatan = (double) r.getInt("total_pendapatan");
+            double profit = (double) r.getInt("profit");
+            list.add(new ModelData(month, pengeluaran, pendapatan, profit));
+        }
+        r.close();
+        s.close();
+        for (int i = list.size() - 1; i >= 0; i--) {
+            ModelData d = list.get(i);
+            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getPengeluaran(), d.getPendapatan(), d.getProfit()}));
+        }
+        chart.start();
+    } catch (Exception e) {
+        System.out.println(e);
+    }
+}
+
      
+    
+    private DateChooser chDate = new DateChooser();
+    private DateChooser chDate1 = new DateChooser();
+
     public Admin() {
         initComponents();
+       
+        chDate.setTextField(cariTx);
+        chDate.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        chDate.setLabelCurrentDayVisible(false);
+        chDate.setDateFormat(new SimpleDateFormat("dd-MMMM-yyyy"));
+        modelHistori=(DefaultTableModel)tabelHistori.getModel();
+        chDate.addActionDateChooserListener((DateChooserListener) new DateChooserAdapter() {
+            @Override
+            public void dateBetweenChanged(DateBetween date, DateChooserAction action){
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                String dateFrom = df.format(date.getFromDate());
+                String toDate = df.format(date.getToDate());
+                cariTanggalHistori("SELECT ROW_NUMBER() OVER (ORDER BY detail_transaksi.kode_transaksi) AS nomor, detail_transaksi.kode_transaksi, menu.nama_makanan, COUNT(menu.nama_makanan) AS jumlah, menu.harga_beli, menu.harga_jual, transaksi.tanggal FROM detail_transaksi INNER JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi INNER JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan where transaksi.tanggal BETWEEN '"+dateFrom+"' AND '"+toDate+"' GROUP BY detail_transaksi.kode_transaksi, menu.nama_makanan, menu.harga_beli, menu.harga_jual, transaksi.tanggal ");
+            }
+        }); 
+        
+        chDate1.setTextField(btnCariDashboard);
+chDate1.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+chDate1.setLabelCurrentDayVisible(false);
+chDate1.setDateFormat(new SimpleDateFormat("dd-MMMM-yyyy"));
+chDate1.addActionDateChooserListener(new DateChooserAdapter() {
+    @Override
+    public void dateBetweenChanged(DateBetween date, DateChooserAction action) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String dateFrom = df.format(date.getFromDate());
+        String toDate = df.format(date.getToDate());
+        cariChartData("SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit, DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y') as `Date` FROM detail_transaksi JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan JOIN transaksi ON detail_transaksi.kode_transaksi where transaksi.tanggal BETWEEN '"+dateFrom+"' AND '"+toDate+"' GROUP BY DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y'), transaksi.tanggal ORDER BY transaksi.tanggal DESC LIMIT 7");
+    }
+});
+        
+//        chDate.setTextField(cariTx);
+//        chDate.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+//        chDate.setLabelCurrentDayVisible(false);
+//        chDate.setDateFormat(new SimpleDateFormat("dd-MMMM-yyyy"));
+//        modelHistori=(DefaultTableModel)tabelHistori.getModel();
+//        chDate.addActionDateChooserListener((DateChooserListener) new DateChooserAdapter() {
+//            @Override
+//            public void dateBetweenChanged(DateBetween date, DateChooserAction action){
+//                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//                String dateFrom = df.format(date.getFromDate());
+//                String toDate = df.format(date.getToDate());
+//                cariTanggalHistori("SELECT SUM(menu.harga_beli) AS total_pengeluaran, SUM(menu.harga_jual) AS total_pendapatan, SUM(menu.harga_jual) - SUM(menu.harga_beli) AS profit, DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y') as `Date` FROM detail_transaksi JOIN menu ON detail_transaksi.kode_makanan = menu.kode_makanan JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi WHERE  BETWEEN '"+dateFrom+"' AND '"+toDate+"' GROUP BY DATE_FORMAT(transaksi.tanggal,'%d-%M-%Y'), transaksi.tanggal ORDER BY transaksi.tanggal DESC LIMIT 7");
+//            }
+//        }); 
+        
         chart.setTitle("Grafik Penjualan");
         chart.addLegend("Pengeluaran", Color.decode("#7b4397"), Color.decode("#dc2430"));
         chart.addLegend("Pendapatan", Color.decode("#e65c00"), Color.decode("#F9D423"));
@@ -447,6 +559,8 @@ public class Admin extends javax.swing.JFrame {
         pemasukanTx = new javax.swing.JLabel();
         grafikPanel = new javax.swing.JPanel();
         chart = new chart.CurveLineChart();
+        btnCariDashboard = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         inputMenu = new javax.swing.JPanel();
         PanelInputMenu1 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
@@ -475,7 +589,6 @@ public class Admin extends javax.swing.JFrame {
         historiPanel = new javax.swing.JPanel();
         historiScrollPane = new javax.swing.JScrollPane();
         tabelHistori = new javax.swing.JTable();
-        cariBtnHistori = new javax.swing.JButton();
         cariTx = new javax.swing.JTextField();
         InputUser = new javax.swing.JPanel();
         PanelInputUser1 = new javax.swing.JPanel();
@@ -493,7 +606,7 @@ public class Admin extends javax.swing.JFrame {
         LabelInputUser6 = new javax.swing.JLabel();
         FieldInputUser6 = new javax.swing.JTextField();
         ButtonInputUserCari = new javax.swing.JButton();
-        ButtonInputUserSimpan = new javax.swing.JButton();
+        ButtonInputUserSimpn = new javax.swing.JButton();
         ButtonInputUserEdit = new javax.swing.JButton();
         ButtonInputUserHapus = new javax.swing.JButton();
         inputRole = new javax.swing.JLabel();
@@ -785,20 +898,34 @@ public class Admin extends javax.swing.JFrame {
         chart.setBackground(new java.awt.Color(80, 80, 80));
         chart.setForeground(new java.awt.Color(80, 80, 80));
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setText("Cari ");
+
         javax.swing.GroupLayout grafikPanelLayout = new javax.swing.GroupLayout(grafikPanel);
         grafikPanel.setLayout(grafikPanelLayout);
         grafikPanelLayout.setHorizontalGroup(
             grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(grafikPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
+                .addGroup(grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
+                    .addGroup(grafikPanelLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCariDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         grafikPanelLayout.setVerticalGroup(
             grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grafikPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))
+                .addGroup(grafikPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCariDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout dashboardLayout = new javax.swing.GroupLayout(dashboard);
@@ -1111,14 +1238,12 @@ public class Admin extends javax.swing.JFrame {
         ));
         historiScrollPane.setViewportView(tabelHistori);
 
-        cariBtnHistori.setText("Cari");
-        cariBtnHistori.addActionListener(new java.awt.event.ActionListener() {
+        cariTx.setForeground(new java.awt.Color(80, 80, 80));
+        cariTx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cariBtnHistoriActionPerformed(evt);
+                cariTxActionPerformed(evt);
             }
         });
-
-        cariTx.setForeground(new java.awt.Color(80, 80, 80));
         cariTx.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 cariTxKeyTyped(evt);
@@ -1132,21 +1257,18 @@ public class Admin extends javax.swing.JFrame {
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)
                     .addGroup(historiPanelLayout.createSequentialGroup()
-                        .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cariBtnHistori, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(28, 28, 28))
+                        .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)
+                        .addGap(28, 28, 28))
+                    .addGroup(historiPanelLayout.createSequentialGroup()
+                        .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         historiPanelLayout.setVerticalGroup(
             historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(historiPanelLayout.createSequentialGroup()
                 .addGap(33, 33, 33)
-                .addGroup(historiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cariBtnHistori)
-                    .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(cariTx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(historiScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
@@ -1262,10 +1384,10 @@ public class Admin extends javax.swing.JFrame {
             }
         });
 
-        ButtonInputUserSimpan.setText("Simpan");
-        ButtonInputUserSimpan.addActionListener(new java.awt.event.ActionListener() {
+        ButtonInputUserSimpn.setText("Simpan");
+        ButtonInputUserSimpn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButtonInputUserSimpanActionPerformed(evt);
+                ButtonInputUserSimpnActionPerformed(evt);
             }
         });
 
@@ -1303,7 +1425,7 @@ public class Admin extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(PanelInputUser2Layout.createSequentialGroup()
-                        .addComponent(ButtonInputUserSimpan)
+                        .addComponent(ButtonInputUserSimpn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(ButtonInputUserEdit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1367,7 +1489,7 @@ public class Admin extends javax.swing.JFrame {
                     .addComponent(ButtonInputUserCari))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PanelInputUser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ButtonInputUserSimpan)
+                    .addComponent(ButtonInputUserSimpn)
                     .addComponent(ButtonInputUserEdit)
                     .addComponent(ButtonInputUserHapus)
                     .addComponent(ButtonInputUserBatal))
@@ -1581,7 +1703,7 @@ public class Admin extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sideBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1835,7 +1957,7 @@ byte[] imageBytes = outputStream.toByteArray();
         // TODO add your handling code here:
     }//GEN-LAST:event_ButtonInputUserCariActionPerformed
 
-    private void ButtonInputUserSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserSimpanActionPerformed
+    private void ButtonInputUserSimpnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonInputUserSimpnActionPerformed
         // TODO add your handling code here:
 //        String id = FieldInputUser1.getText();
         String username = FieldInputUser4.getText();
@@ -1871,7 +1993,7 @@ byte[] imageBytes = outputStream.toByteArray();
         }catch(Exception e){
             System.out.println(e);
         }
-    }//GEN-LAST:event_ButtonInputUserSimpanActionPerformed
+    }//GEN-LAST:event_ButtonInputUserSimpnActionPerformed
 
     private void searchInputBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchInputBarcodeActionPerformed
         // TODO add your handling code here:
@@ -1885,10 +2007,6 @@ byte[] imageBytes = outputStream.toByteArray();
         // TODO add your handling code here:
         cari();
     }//GEN-LAST:event_cariBtnBarcodeActionPerformed
-
-    private void cariBtnHistoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariBtnHistoriActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cariBtnHistoriActionPerformed
 
     private void uploadBtnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadBtnMenuActionPerformed
             // TODO add your handling code here:
@@ -2170,7 +2288,7 @@ byte[] imageBytes = outputStream.toByteArray();
 
     private void TabelInputUser1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelInputUser1MouseClicked
         // TODO add your handling code here:
-        ButtonInputUserSimpan.setEnabled(false);
+        ButtonInputUserSimpn.setEnabled(false);
         int i = TabelInputUser1.getSelectedRow();
         if(i == -1 ){
             return;
@@ -2210,7 +2328,7 @@ byte[] imageBytes = outputStream.toByteArray();
                  JOptionPane.showMessageDialog(null, "Data Terhapus");
                  loadDataMenu();
                  autoNumberMenu();
-                 ButtonInputUserSimpan.setEnabled(true);
+                 ButtonInputUserSimpn.setEnabled(true);
             }catch(Exception e){
                 System.out.println(e);
             }
@@ -2234,7 +2352,7 @@ byte[] imageBytes = outputStream.toByteArray();
           FieldInputUser2.setText("");
           FieldInputUser3.setText("");
           autoNumberUser();
-          ButtonInputUserSimpan.setEnabled(true);
+          ButtonInputUserSimpn.setEnabled(true);
     }//GEN-LAST:event_ButtonInputUserBatalActionPerformed
 
     private void KasirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KasirBtnActionPerformed
@@ -2280,6 +2398,10 @@ byte[] imageBytes = outputStream.toByteArray();
           loadDataUser();
     }//GEN-LAST:event_FieldInputUser6KeyTyped
 
+    private void cariTxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariTxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cariTxActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -2319,7 +2441,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JButton ButtonInputUserCari;
     private javax.swing.JButton ButtonInputUserEdit;
     private javax.swing.JButton ButtonInputUserHapus;
-    private javax.swing.JButton ButtonInputUserSimpan;
+    private javax.swing.JButton ButtonInputUserSimpn;
     private javax.swing.JButton ButtonSimpan;
     private javax.swing.JTextField FieldInputMenu1;
     private javax.swing.JTextField FieldInputMenu2;
@@ -2355,8 +2477,8 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JPanel barcodeNav;
     private javax.swing.JLabel barcodeNavLabel;
     private javax.swing.JTable barcodeTabel;
+    private javax.swing.JTextField btnCariDashboard;
     private java.awt.Button cariBtnBarcode;
-    private javax.swing.JButton cariBtnHistori;
     private javax.swing.JTextField cariTx;
     private javax.swing.JPanel cetakBarcode;
     private javax.swing.JButton cetakBarcodeBtn;
@@ -2383,6 +2505,7 @@ byte[] imageBytes = outputStream.toByteArray();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
